@@ -5,7 +5,7 @@ var gulp = require('gulp'),
 gulp.task('lint', function() {
 	return gulp.src(['./routes/*.js', './server/schema/*.js', 'document-manager.js', 'document-manager.spec.js'])
 		.pipe(lint())
-		.pipe(lint.format())
+		.pipe(lint.format());
 });
 
 gulp.task('watch', function() {
@@ -17,6 +17,6 @@ gulp.task('server', function() {
 	server.start();
 });
 
-gulp.watch()
+gulp.watch();
 
-gulp.task('default', ['lint', 'server'])
+gulp.task('default', ['lint', 'server']);

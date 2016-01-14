@@ -1,19 +1,34 @@
-var express = require('express'),
-	User = require('../controllers/users'),
-	router = express.Router();
+var User = require('../models/user');
+var Users = require('../controllers/users');
+var passport = require('passport');
+module.exports = function(app, passport) {
+	// app.post('/user/signup', Users.signup);
+	app.post('/users', passport.authenticate('signup', {
+		successRedirect: '/user/loginSuccess',
+		failureRedirect: '/user/loginFailure'
+	}));
+	app.post('/users/login', passport.authenticate('login', {
+		successRedirect: '/user/loginSuccess',
+		failureRedirect: '/user/loginFailure'
+		})
+	);
 
-router.route('/login').post(User.login)
-	.get(User.login);
-
-router.route('/logout').post(User.logout)
-	.get(User.logout);
-
-router.route('/users').post(User.create)
-	.get(User.login);
-
-router.route('/users/:user_id').get(User.login)
-	.put(User.logout);
+	app.post('/users/logout', function(req, res) {});
+	app.get('/users', function(req, res) {});
+	app.get('/users/:id', function(req, res){});
+	app.put('/users/:id', function(req, res) {});
+	app.delete('/users/:id', function(req, res) {});
 
 
-module.exports = router;
+	app.get('/home', function(req, res) {
+		res.send('hELLO');
+	});
 
+	app.get('/user/loginSuccess', function(req, res, next) {
+		res.send('Logged up successfully');
+	});
+
+	app.get('/user/loginFailure', function(req, res, next) {
+		res.send('Failed to login');
+	});
+};
