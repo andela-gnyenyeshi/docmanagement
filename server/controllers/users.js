@@ -32,11 +32,11 @@ module.exports = {
       if (err) {
         return res.status(500).send(err.errmessage || err);
       } else {
-        if (req.body.firstname) {
-          user.firstname = req.body.firstname;
+        if (req.body.name.first) {
+          user.firstname = req.body.name.first;
         }
-        if (req.body.lastname) {
-          user.lastname = req.body.lastname;
+        if (req.body.name.last) {
+          user.lastname = req.body.name.last;
         }
         if (req.body.username) {
           user.username = req.body.username;
