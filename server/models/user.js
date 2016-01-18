@@ -26,6 +26,11 @@ var userSchema = new Schema({
 	password: {
 		type: String,
 		required: true
+	},
+	role: {
+		type: Schema.ObjectId,
+		ref: 'Role',
+		required: true
 	}
 });
 

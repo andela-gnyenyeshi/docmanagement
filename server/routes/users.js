@@ -1,34 +1,41 @@
 var User = require('../models/user');
 var Users = require('../controllers/users');
+var Roles = require('../models/role');
 var passport = require('passport');
 module.exports = function(app, passport) {
-	// app.post('/user/signup', Users.signup);
-	app.post('/users', passport.authenticate('signup', {
-		successRedirect: '/user/loginSuccess',
-		failureRedirect: '/user/loginFailure'
-	}));
-	app.post('/users/login', passport.authenticate('login', {
-		successRedirect: '/user/loginSuccess',
-		failureRedirect: '/user/loginFailure'
-		})
-	);
+  app.post('/users', passport.authenticate('signup', {
+    successRedirect: '/user/loginSuccess',
+    failureRedirect: '/user/loginFailure'
+  }));
+  app.post('/users/login', passport.authenticate('login', {
+    successRedirect: '/user/loginSuccess',
+    failureRedirect: '/user/loginFailure'
+  }));
+  app.post('/users/logout', Users.logout);
+  app.get('/users', Users.find);
+  app.get('/users/:user_id', Users.findOne);
+  app.put('/users/:user_id', Users.update);
+  app.delete('/users/:user_id', Users.delete);
 
-	app.post('/users/logout', function(req, res) {});
-	app.get('/users', function(req, res) {});
-	app.get('/users/:id', function(req, res){});
-	app.put('/users/:id', function(req, res) {});
-	app.delete('/users/:id', function(req, res) {});
+  app.get('/user/loginSuccess', function(req, res, next) {
+    res.send('Logged up successfully');
+  });
 
+  app.get('/logout', function(req, res) {
+    res.send('Successfully logged out');
+  });
 
-	app.get('/home', function(req, res) {
-		res.send('hELLO');
-	});
+  app.get('/user/loginFailure', function(req, res, next) {
+    res.send('Failed to login');
+  });
 
-	app.get('/user/loginSuccess', function(req, res, next) {
-		res.send('Logged up successfully');
-	});
+  function isLoggedIn(req, res, next) {
 
-	app.get('/user/loginFailure', function(req, res, next) {
-		res.send('Failed to login');
-	});
+    // If user is Authenticated
+    if (req.isAuthenticated())
+      return next();
+
+    // If not, user is redirected
+    res.redirect('/users');
+  }
 };
