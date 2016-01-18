@@ -1,12 +1,8 @@
 var User = require('../models/user');
 var passport = require('passport');
-	// mongoDB = require('mongodb').MongoClient;
 module.exports = {
-	createUser: function(req, res) {
-
-	},
-
-	logout: function(req, res){
+createUser: function(req, res) {},
+logout: function(req, res) {
 		req.logout();
 		res.redirect('/logout');
 	},
@@ -55,12 +51,14 @@ module.exports = {
 					if (err) {
 						return res.status(500).send(err.errmessage || err);
 					} else {
-						return res.json({'message' : 'User successfully updated!'});
-					}
-				});
-			}
-		});
-	},
+						return res.json({
+							'message': 'User successfully updated!'
+            });
+          }
+        });
+      }
+    });
+  },
 
 	delete: function(req, res) {
 		if (req.params.user_id) {
@@ -70,11 +68,13 @@ module.exports = {
 				if (err) {
 					return res.status(500).send(err.errmessage || err);
 				} else {
-					return res.json({'message': 'User deleted successfully!'});
-				}
-			});
-		}
-	},
+					return res.json({
+					 'message': 'User deleted successfully!'
+         });
+        }
+      });
+    }
+  },
 
 	success: function(req, res) {
 		res.send('Logged in Successfully');
