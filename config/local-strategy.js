@@ -36,33 +36,29 @@ module.exports = function(passport) {
           console.log('Someone already has this Username or Email. Sorry -_-');
           return done(null, false);
         } else {
-          // Create user if email is not in use
-          // var roles;
-          // if (!req.body.roles) {
-          //   roles = Roles.find({
-          //     title: 'Viewer'
-          //   }).exec(function(err, role) {
-          //     if (err)
-          //       console.log(err);
-          //     console.log(role);
-          //   });
-          // }
-          //console.log(roles);
+          //Create user if email is not in use
+          //var roles;
           var newUser = new User();
           newUser.name.first = req.body.name.first;
           newUser.name.last = req.body.name.last;
           newUser.username = req.body.username;
           newUser.email = req.body.email;
-          //newUser.role = roles;
           newUser.password = newUser.generateHash(req.body.password);
-
-          // Save the user
-          newUser.save(function(err) {
-            if (err)
-              throw err;
-            console.log('created');
-            return done(null, newUser);
-          });
+            Roles.find({
+              title: req.body.role || 'Viewer'
+            }).exec(function(err, role) {
+              if (err)
+                console.log(err);
+              newUser.roleId = role[0]._id;
+              // Save the user
+              newUser.save(function(err, usr) {
+                if (err)
+                  throw err;
+                usr.password = null;
+                console.log('CREATED',usr);
+                return done(null, newUser);
+              });
+            });
         }
       });
     });
@@ -96,8 +92,4 @@ module.exports = function(passport) {
   var validPassword = function(user, password) {
     return bcrypt.compareSync(password, user.password);
   };
-
-  // var createUser = function(req, res) {
-  //
-  // };
 };

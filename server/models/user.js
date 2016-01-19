@@ -27,11 +27,11 @@ var userSchema = new Schema({
 		type: String,
 		required: true
 	},
-	// role: {
-	// 	type: Schema.ObjectId,
-	// 	ref: 'Role',
-	// 	required: true
-	// }
+	roleId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Role',
+		required: true
+	}
 });
 
 // Generating a Hash

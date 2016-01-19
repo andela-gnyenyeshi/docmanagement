@@ -16,7 +16,7 @@ module.exports = function(app, passport) {
   app.get('/users/:user_id', Users.findOne);
   app.put('/users/:user_id', Users.update);
   app.delete('/users/:user_id', Users.delete);
-  app.get('/loginSuccess', Users.success);
+  app.get('/users/loginSuccess', Users.success);
   app.get('/logout', Users.loggedOut);
   app.get('/signupFailure', Users.signupFail);
   app.get('/loginFailure', Users.loginFail);
