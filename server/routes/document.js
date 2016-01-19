@@ -1,5 +1,9 @@
-var express = require('express'),
-	Document = require('../controllers/document'),
-	router = express.Router();
+var Document = require('../models/document');
 
-	router.post()
+module.exports = {
+  create: function(req, res) {
+    var document = new Document();
+    document.title = req, body.title;
+    document.content = req.body.content;
+  }
+};

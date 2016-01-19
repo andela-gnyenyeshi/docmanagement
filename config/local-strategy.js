@@ -37,23 +37,23 @@ module.exports = function(passport) {
           return done(null, false);
         } else {
           // Create user if email is not in use
-          var roles;
-          if (!req.body.roles) {
-            roles = Roles.find({
-              title: 'Viewer'
-            }).exec(function(err, role) {
-              if (err)
-                console.log(err);
-              console.log(role);
-            });
-          }
-          console.log(roles);
+          // var roles;
+          // if (!req.body.roles) {
+          //   roles = Roles.find({
+          //     title: 'Viewer'
+          //   }).exec(function(err, role) {
+          //     if (err)
+          //       console.log(err);
+          //     console.log(role);
+          //   });
+          // }
+          //console.log(roles);
           var newUser = new User();
           newUser.name.first = req.body.name.first;
           newUser.name.last = req.body.name.last;
           newUser.username = req.body.username;
           newUser.email = req.body.email;
-          newUser.role = roles;
+          //newUser.role = roles;
           newUser.password = newUser.generateHash(req.body.password);
 
           // Save the user

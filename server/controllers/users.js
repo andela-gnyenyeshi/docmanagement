@@ -77,10 +77,18 @@ module.exports = {
   },
 
   success: function(req, res) {
-    res.send('Logged in Successfully');
+    res.json({'message': 'Logged in Successfully'});
   },
 
-  fail: function(req, res) {
-    res.send('Failed to Login');
+  loginFail: function(req, res) {
+    res.json({'message': 'Failed to Login'});
   },
+
+  signupFail: function(req, res) {
+    res.json({'message': 'Failed to Sign up'});
+  },
+
+  loggedOut: function(req, res) {
+    res.json({'message': 'Logged out successfully'});
+  }
 };
