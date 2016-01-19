@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
 	LiveServer = require('gulp-live-server'),
+	// BrowserSync = require('browser-sync'),
 	lint = require('gulp-eslint');
 
 gulp.task('lint', function() {
@@ -7,6 +8,8 @@ gulp.task('lint', function() {
 		.pipe(lint())
 		.pipe(lint.format());
 });
+
+// gulp.task('browser', function() {});
 
 gulp.task('watch', function() {
 
