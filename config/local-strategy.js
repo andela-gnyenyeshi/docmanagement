@@ -51,11 +51,11 @@ module.exports = function(passport) {
                 console.log(err);
               newUser.roleId = role[0]._id;
               // Save the user
-              newUser.save(function(err, usr) {
+              newUser.save(function(err, user) {
                 if (err)
                   throw err;
-                usr.password = null;
-                console.log('CREATED',usr);
+                user.password = null;
+                console.log('CREATED',user);
                 return done(null, newUser);
               });
             });

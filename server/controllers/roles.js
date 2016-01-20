@@ -2,7 +2,7 @@ var Roles = require('../models/role');
 
 module.exports = {
   create: function(req, res) {
-    var role = new Role();
+    var role = new Roles();
     role.title = req.body.title;
     role.save(function(err) {
       if (err) {
@@ -30,6 +30,16 @@ module.exports = {
       } else {
         res.json(role);
       }
+    });
+  },
+
+  findByTitle: function(req, res) {
+    Roles.find({
+      title: req.body.title
+    }).exec(function(err, role) {
+      if (err)
+        return res.status(500).send(err.errmessage || err);
+      res.json(role);
     });
   },
 

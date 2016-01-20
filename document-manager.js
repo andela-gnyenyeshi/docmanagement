@@ -6,7 +6,8 @@ var express = require('express'),
   port = process.env.PORT || 4040,
   mongoose = require('mongoose'),
   config = require('./config/config'),
-  routes = require('./server/routes/users'),
+  users = require('./server/routes/users'),
+  roles = require('./server/routes/role'),
   passport = require('passport'),
   User = require('./server/models/user'),
   Strategy = require('./config/local-strategy'),
@@ -34,8 +35,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-routes(app, passport);
+// Routes
+users(app, passport);
+roles(app);
 Strategy(passport);
 
 // Connect to the database
