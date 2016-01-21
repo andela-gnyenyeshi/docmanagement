@@ -1,20 +1,63 @@
 var User = require('../models/user');
 var passport = require('passport');
 module.exports = {
-  createUser: function(req, res) {},
+  createUser: function(req, res, next) {
+    passport.authenticate('signup', function(err, user) {
+      if (err)
+        return res.status(500).send(err.errmessage || err);
+      if (!user) {
+        res.json({
+          error: 'Sign up failed. This Email or Username is already in use'
+        });
+      } if (user) {
+        return res.json({
+          message: 'User Created.'
+        });
+      }
+    })(req, res, next);
+  },
+  session: function(req, res, next) {
+    if (req.session.user) {
+      console.log(req.session);
+        next();
+    } else {
+      return res.status(401).json({
+        error: 'You are not logged in'
+      });
+    }
+  },
+  login: function(req, res, next) {
+    passport.authenticate('login', function(err, user){
+      if (err)
+        return res.status(500).send(err.errmessage || err);
+      if (!user) {
+        return res.json({
+          error: 'Sorry. Wrong username and password combination'
+        });
+      }
+      if (user) {
+        req.session.user = user;
+        console.log(req.session.user);
+        return res.json({
+          message: 'Logged in successfully'
+        });
+      }
+    })(req, res, next);
+  },
   logout: function(req, res) {
-    req.logout();
+    delete req.session.user;
+    console.log(req.session);
     res.redirect('/logout');
   },
 
   find: function(req, res) {
-    User.find(function(err, users) {
-      if (err) {
-        return res.status(500).send(err.errmessage || err);
-      } else {
-        return res.json(users);
-      }
-    });
+      User.find(function(err, users) {
+        if (err) {
+          return res.status(500).send(err.errmessage || err);
+        } else {
+          return res.json(users);
+        }
+      });
   },
 
   findOne: function(req, res) {
@@ -32,11 +75,11 @@ module.exports = {
       if (err) {
         return res.status(500).send(err.errmessage || err);
       } else {
-        if (req.body.name.first) {
-          user.firstname = req.body.name.first;
+        if (req.body.firstname) {
+          user.name.first = req.body.firstname;
         }
-        if (req.body.name.last) {
-          user.lastname = req.body.name.last;
+        if (req.body.lastname) {
+          user.name.last = req.body.lastname;
         }
         if (req.body.username) {
           user.username = req.body.username;

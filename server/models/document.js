@@ -17,6 +17,10 @@ var documentSchema = new Schema({
 		type: String,
 		required: true
 	},
+	access: {
+		type: String,
+		required: true
+	},
 	dateCreated: {
 		type: Date,
 		required: true

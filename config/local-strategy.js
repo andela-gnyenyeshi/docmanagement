@@ -39,8 +39,8 @@ module.exports = function(passport) {
           //Create user if email is not in use
           //var roles;
           var newUser = new User();
-          newUser.name.first = req.body.name.first;
-          newUser.name.last = req.body.name.last;
+          newUser.name.first = req.body.firstname;
+          newUser.name.last = req.body.lastname;
           newUser.username = req.body.username;
           newUser.email = req.body.email;
           newUser.password = newUser.generateHash(req.body.password);
@@ -85,6 +85,7 @@ module.exports = function(passport) {
         return done(null, false);
       }
       // Success
+      // console.log(user);
       return done(null, user);
     });
   }));
