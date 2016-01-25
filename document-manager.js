@@ -7,6 +7,8 @@ var express = require('express'),
   mongoose = require('mongoose'),
   config = require('./config/config'),
   users = require('./server/routes/users'),
+  types = require('./server/routes/doc-type'),
+  documents = require('./server/routes/document'),
   roles = require('./server/routes/role'),
   passport = require('passport'),
   User = require('./server/models/user'),
@@ -36,9 +38,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-users(app, passport);
-roles(app);
 Strategy(passport);
+users(app, passport);
+types(app);
+roles(app);
+documents(app);
+
 
 // Connect to the database
 mongoose.connect(config.db, function(err) {

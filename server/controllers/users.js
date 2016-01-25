@@ -1,5 +1,15 @@
 var User = require('../models/user');
+var Roles = require('../models/role');
 var passport = require('passport');
+
+function Role(param) {
+  Roles.findById(param, function(err, role) {
+    if (err)
+      return res.status(500).send(err.errmessage || err);
+    return role.title;
+  });
+}
+
 module.exports = {
   createUser: function(req, res, next) {
     passport.authenticate('signup', function(err, user) {
@@ -9,25 +19,28 @@ module.exports = {
         res.json({
           error: 'Sign up failed. This Email or Username is already in use'
         });
-      } if (user) {
+      }
+      if (user) {
+        console.log(user);
         return res.json({
           message: 'User Created.'
         });
       }
     })(req, res, next);
   },
+
   session: function(req, res, next) {
     if (req.session.user) {
-      console.log(req.session);
-        next();
+      next();
     } else {
       return res.status(401).json({
         error: 'You are not logged in'
       });
     }
   },
+
   login: function(req, res, next) {
-    passport.authenticate('login', function(err, user){
+    passport.authenticate('login', function(err, user) {
       if (err)
         return res.status(500).send(err.errmessage || err);
       if (!user) {
@@ -37,27 +50,26 @@ module.exports = {
       }
       if (user) {
         req.session.user = user;
-        console.log(req.session.user);
         return res.json({
           message: 'Logged in successfully'
         });
       }
     })(req, res, next);
   },
+
   logout: function(req, res) {
     delete req.session.user;
-    console.log(req.session);
     res.redirect('/logout');
   },
 
   find: function(req, res) {
-      User.find(function(err, users) {
-        if (err) {
-          return res.status(500).send(err.errmessage || err);
-        } else {
-          return res.json(users);
-        }
-      });
+    User.find(function(err, users) {
+      if (err) {
+        return res.status(500).send(err.errmessage || err);
+      } else {
+        return res.json(users);
+      }
+    });
   },
 
   findOne: function(req, res) {
@@ -104,34 +116,30 @@ module.exports = {
   },
 
   delete: function(req, res) {
-    if (req.params.user_id) {
-      User.remove({
-        _id: req.params.user_id
-      }, function(err) {
-        if (err) {
-          return res.status(500).send(err.errmessage || err);
-        } else {
-          return res.json({
-            'message': 'User deleted successfully!'
-          });
-        }
+    if (Role(req.session.user.roleId) === 'Admin') {
+      if (req.params.user_id) {
+        User.remove({
+          _id: req.params.user_id
+        }, function(err) {
+          if (err) {
+            return res.status(500).send(err.errmessage || err);
+          } else {
+            return res.json({
+              'message': 'User deleted successfully!'
+            });
+          }
+        });
+      }
+    } else {
+      return res.json({
+        'message': 'Sorry, you must be an Admin to delete a user'
       });
     }
   },
 
-  success: function(req, res) {
-    res.json({'message': 'Logged in Successfully'});
-  },
-
-  loginFail: function(req, res) {
-    res.json({'message': 'Failed to Login'});
-  },
-
-  signupFail: function(req, res) {
-    res.json({'message': 'Failed to Sign up'});
-  },
-
   loggedOut: function(req, res) {
-    res.json({'message': 'Logged out successfully'});
+    res.json({
+      'message': 'You have logged out successfully'
+    });
   }
 };

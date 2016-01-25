@@ -1,13 +1,13 @@
 // Require mongoose
 var mongoose = require('mongoose'),
-	Schema = mongoose.schema;
+	Schema = mongoose.Schema;
+	require('./user');
 
 // Document Schema
 var documentSchema = new Schema({
 	ownerId: {
-		type: Number,
-		required: true,
-		unique: true
+		type: String,
+		required: true
 	},
 	title: {
 		type: String,
@@ -17,8 +17,18 @@ var documentSchema = new Schema({
 		type: String,
 		required: true
 	},
-	access: {
+	accessType: {
 		type: String,
+		default: 'None'
+	},
+	accessId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Role',
+		required: false
+	},
+	typeId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Type',
 		required: true
 	},
 	dateCreated: {

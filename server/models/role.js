@@ -8,8 +8,7 @@ var roleSchema = new Schema({
 		type: String,
 		required: true,
 		unique: true,
-		default: 'Viewer',
-		enum: ['Viewer', 'Admin', 'Staff']
+		default: 'Viewer'
 	}
 });
 

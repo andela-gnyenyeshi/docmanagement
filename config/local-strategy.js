@@ -55,7 +55,7 @@ module.exports = function(passport) {
                 if (err)
                   throw err;
                 user.password = null;
-                console.log('CREATED',user);
+                //console.log('CREATED',user);
                 return done(null, newUser);
               });
             });
@@ -85,7 +85,6 @@ module.exports = function(passport) {
         return done(null, false);
       }
       // Success
-      // console.log(user);
       return done(null, user);
     });
   }));
