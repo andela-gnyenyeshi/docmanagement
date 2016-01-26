@@ -1,3 +1,4 @@
+(function() {
 var User = require('../models/user');
 var Users = require('../controllers/users');
 var passport = require('passport');
@@ -9,7 +10,9 @@ module.exports = function(app, passport) {
   app.get('/logout', Users.loggedOut);
   app.use(Users.session);
   app.get('/users', Users.find);
-  app.get('/users/:user_id', Users.findOne);
-  app.put('/users/:user_id', Users.update);
-  app.delete('/users/:user_id', Users.delete);
+  app.route('/users/:user_id')
+    .get(Users.findOne)
+    .put(Users.update)
+    .delete(Users.delete);
 };
+})();

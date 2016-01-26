@@ -1,14 +1,9 @@
+(function() {
+  'use strict';
 var User = require('../models/user');
 var Roles = require('../models/role');
 var passport = require('passport');
-
-function Role(param) {
-  Roles.findById(param, function(err, role) {
-    if (err)
-      return res.status(500).send(err.errmessage || err);
-    return role.title;
-  });
-}
+var roles;
 
 module.exports = {
   createUser: function(req, res, next) {
@@ -16,13 +11,12 @@ module.exports = {
       if (err)
         return res.status(500).send(err.errmessage || err);
       if (!user) {
-        res.json({
+        return res.status(449).json({
           error: 'Sign up failed. This Email or Username is already in use'
         });
       }
       if (user) {
-        console.log(user);
-        return res.json({
+        return res.status(200).json({
           message: 'User Created.'
         });
       }
@@ -44,13 +38,13 @@ module.exports = {
       if (err)
         return res.status(500).send(err.errmessage || err);
       if (!user) {
-        return res.json({
+        return res.status(449).json({
           error: 'Sorry. Wrong username and password combination'
         });
       }
       if (user) {
         req.session.user = user;
-        return res.json({
+        return res.status(200).json({
           message: 'Logged in successfully'
         });
       }
@@ -67,7 +61,7 @@ module.exports = {
       if (err) {
         return res.status(500).send(err.errmessage || err);
       } else {
-        return res.json(users);
+        return res.status(200).json(users);
       }
     });
   },
@@ -77,69 +71,79 @@ module.exports = {
       if (err) {
         return res.status(500).send(err.errmessage || err);
       } else {
-        return res.json(user);
+        return res.status(200).json(user);
       }
     });
   },
 
   update: function(req, res) {
     User.findById(req.params.user_id, function(err, user) {
-      if (err) {
-        return res.status(500).send(err.errmessage || err);
-      } else {
-        if (req.body.firstname) {
-          user.name.first = req.body.firstname;
-        }
-        if (req.body.lastname) {
-          user.name.last = req.body.lastname;
-        }
-        if (req.body.username) {
-          user.username = req.body.username;
-        }
-        if (req.body.email) {
-          user.email = req.body.email;
-        }
-        if (req.body.password) {
-          user.password = req.body.password;
-        }
-        user.save(function(err) {
-          if (err) {
-            return res.status(500).send(err.errmessage || err);
-          } else {
-            return res.json({
-              'message': 'User successfully updated!'
-            });
+      if (req.session.user._id === user._id) {
+        if (err) {
+          return res.status(500).send(err.errmessage || err);
+        } else {
+          if (req.body.firstname) {
+            user.name.first = req.body.firstname;
           }
+          if (req.body.lastname) {
+            user.name.last = req.body.lastname;
+          }
+          if (req.body.username) {
+            user.username = req.body.username;
+          }
+          if (req.body.email) {
+            user.email = req.body.email;
+          }
+          if (req.body.password) {
+            user.password = req.body.password;
+          }
+          user.save(function(err) {
+            if (err) {
+              return res.status(500).send(err.errmessage || err);
+            } else {
+              return res.status(200).json({
+                'message': 'User successfully updated!'
+              });
+            }
+          });
+        }
+      } else {
+        return res.status(403).json({
+          'message': 'Sorry. Only the Owner can update the profile'
         });
       }
     });
   },
 
   delete: function(req, res) {
-    if (Role(req.session.user.roleId) === 'Admin') {
-      if (req.params.user_id) {
-        User.remove({
-          _id: req.params.user_id
-        }, function(err) {
-          if (err) {
-            return res.status(500).send(err.errmessage || err);
-          } else {
-            return res.json({
-              'message': 'User deleted successfully!'
+    Roles.findById(req.session.user.roleId, function(err, role) {
+      if (err)
+        return res.status(500).send(err.errmessage || err);
+      roles = role.title;
+      if (roles === 'Admin') {
+        if (req.params.user_id) {
+          User.remove({
+            _id : req.params.user_id
+          }, function(err){
+            if (err)
+              return res.status(500).send(err.errmessage || err);
+            return res.status(200).json({
+              'message': 'User deleted successfully'
             });
-          }
+          });
+        }
+      } else {
+        return res.status(403).json({
+          'message': 'You need to be an Admin to perfomr this action'
         });
       }
-    } else {
-      return res.json({
-        'message': 'Sorry, you must be an Admin to delete a user'
-      });
-    }
+    });
   },
 
   loggedOut: function(req, res) {
-    res.json({
+    return res.status(200).json({
       'message': 'You have logged out successfully'
     });
   }
 };
+})();
