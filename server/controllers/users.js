@@ -6,9 +6,9 @@ var passport = require('passport');
 var roles;
 
 module.exports = {
-  createUser: function(req, res, next) {
-    passport.authenticate('signup', function(err, user) {
-      if (err)
+ createUser: function(req, res, next) {
+  passport.authenticate('signup', function(err, user) {
+   if (err)
         return res.status(500).send(err.errmessage || err);
       if (!user) {
         return res.status(449).json({
