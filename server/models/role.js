@@ -1,13 +1,14 @@
 // Require Mongoose
 var mongoose = require('mongoose'),
-	Schema = mongoose.schema;
+	Schema = mongoose.Schema;
 
 // Role schema
 var roleSchema = new Schema({
 	title: {
 		type: String,
 		required: true,
-		unique: true
+		unique: true,
+		default: 'Viewer'
 	}
 });
 
