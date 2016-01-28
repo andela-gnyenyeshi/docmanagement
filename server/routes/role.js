@@ -13,6 +13,6 @@ module.exports = function(app) {
     .put(Roles.update)
     .delete(Roles.delete);
 
-  app.get('/roles/find', Roles.findByTitle);
+  app.get('/roles/title_id', Roles.findByTitle);
 };
 })();

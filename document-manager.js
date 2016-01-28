@@ -1,3 +1,4 @@
+(function() {
 // Require dependencies
 var express = require('express'),
   bodyParser = require('body-parser'),
@@ -58,3 +59,5 @@ mongoose.connect(config.db, function(err) {
 app.listen(port, function() {
   console.log('Listening on port: ' + port);
 });
+module.exports = app;
+})();

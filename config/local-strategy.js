@@ -29,7 +29,6 @@ module.exports = function(passport) {
         }]
       }, function(err, user) {
         if (err) {
-          console.log('Err ya kusign up');
           return done(err);
         }
         if (user) {
@@ -37,7 +36,6 @@ module.exports = function(passport) {
           return done(null, false);
         } else {
           //Create user if email is not in use
-          //var roles;
           var newUser = new User();
           newUser.name.first = req.body.firstname;
           newUser.name.last = req.body.lastname;
@@ -52,8 +50,14 @@ module.exports = function(passport) {
               newUser.roleId = role[0]._id;
               // Save the user
               newUser.save(function(err, user) {
-                if (err)
-                  throw err;
+                        if (err) {
+                    console.log('Error Inserting New Data');
+                    if (err.name == 'ValidationError') {
+                        for (field in err.errors) {
+                            console.log(err.errors[field].message);
+                        }
+                    }
+                }
                 user.password = null;
                 //console.log('CREATED',user);
                 return done(null, newUser);
