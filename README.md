@@ -1,7 +1,7 @@
 DOCUMENT MANAGEMENT SYSTEM
 ==========================
 
-Document Management System is an application that helps a user manage his/her documents in an organized way. A User can be able to upload a document, edit it and share it with other users. Aside from enabling a user to properly document his/her work with regard to category, the application permits users to work collaboratively on documents.
+Document Management System is an application that helps users manage their documents in an organized way. A User can be able to upload a document, edit it and share it with other users. Aside from enabling users to properly document their work with regard to category, the application permits users to work collaboratively on documents.
 
 Development
 -----------
@@ -9,7 +9,7 @@ This application has been created using Nodejs environment and implementing Expr
 
 Installation.
 -------------
-1. Install Nodejs(www.nodejs.org) and MongoDB(www.mongodb.org)
+1. Install [Nodejs](www.nodejs.org) and [MongoDB](www.mongodb.org)
 2. Clone this repo or download the zipped file.
 3. Navigate to the master branch.
 4. Run
