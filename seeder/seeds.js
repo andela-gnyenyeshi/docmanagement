@@ -1,4 +1,5 @@
 (function() {
+  'use strict';
   var config = require('../config/config'),
     Users = require('../server/models/user'),
     Roles = require('../server/models/role'),
@@ -7,8 +8,8 @@
     async = require('async'),
     Types = require('../server/models/doc-type'),
     Documents = require('../server/models/document'),
-    app = require('../document-manager.js'),
-    url = config.db;
+    app = require('../app.js');
+
 
   function roleSeed(next) {
     var roles = [{
@@ -41,7 +42,7 @@
   }
 
   function userSeed(roles, done) {
-    var one, two , three;
+    var one, two, three;
     async.waterfall([
       function(callback) {
         server
@@ -52,7 +53,7 @@
             lastname: 'Nyenyeshi',
             email: 'gertienyesh@gmail.com',
             password: 'gertrudenyenyeshi',
-            roleId: roles[1]._id
+            role: roles[1].title
           })
           .expect("Content-type", /json/)
           .end(function(err, res) {
@@ -61,7 +62,6 @@
             callback(null, one);
           });
       },
-
       function(one, callback) {
         server
           .post('/users')
@@ -71,11 +71,11 @@
             lastname: 'Mrunde',
             email: 'anita@gmail.com',
             password: 'anitamrunde',
-            roleId: roles[0]._id
+            role: roles[0].title
           })
           .expect("Content-type", /json/)
           .end(function(err, res) {
-          //  console.log('haha',res.body);
+            //console.log('haha',res.body);
             two = res.body;
             callback(null, two, one);
           });
@@ -89,11 +89,11 @@
             lastname: 'Asingwa',
             email: 'asingwa@gmail.com',
             password: 'cynthiaasingwa',
-            roleId: roles[2]._id
+            role: roles[2].title
           })
           .expect("Content-type", /json/)
           .end(function(err, res) {
-          //  console.log('ha',res.body);
+            //console.log('ha',res.body);
             three = res.body;
             callback(null, one, two, three);
           });
@@ -109,6 +109,7 @@
 
   function documentSeed(user, role, type, next) {
     //console.log('ROLE', role, 'USER', user, 'TYPE', type);
+    var created = [];
     var documents = [{
       title: 'One',
       content: 'Tony Stark',
@@ -120,6 +121,33 @@
       accessId: role[0]._id
     }, {
       title: 'Two',
+      content: 'Clark Kent',
+      ownerId: user.one._id,
+      accessType: 'Private',
+      typeId: type[0]._id,
+      lastModified: Date.now(),
+      dateCreated: Date.now(),
+      accessId: role[0]._id
+    }, {
+      title: 'Three',
+      content: 'Winker Watson',
+      ownerId: user.one._id,
+      accessType: 'None',
+      typeId: type[0]._id,
+      lastModified: Date.now(),
+      dateCreated: Date.now(),
+      accessId: role[1]._id
+    }, {
+      title: 'Four',
+      content: 'Magnus Bane',
+      ownerId: user.two._id,
+      accessType: 'None',
+      typeId: type[0]._id,
+      lastModified: Date.now(),
+      dateCreated: Date.now(),
+      accessId: role[1]._id
+    }, {
+      title: 'Five',
       content: 'Christian Bale',
       ownerId: user.two._id,
       accessType: 'Private',
@@ -128,7 +156,25 @@
       dateCreated: Date.now(),
       accessId: role[1]._id
     }, {
-      title: 'Three',
+      title: 'Six',
+      content: 'Dennis the Menace',
+      ownerId: user.two._id,
+      accessType: 'None',
+      typeId: type[2]._id,
+      lastModified: Date.now(),
+      dateCreated: Date.now(),
+      accessId: role[2]._id
+    }, {
+      title: 'Seven',
+      content: 'Gandalf the White',
+      ownerId: user.three._id,
+      accessType: 'Private',
+      typeId: type[2]._id,
+      lastModified: Date.now(),
+      dateCreated: Date.now(),
+      accessId: role[2]._id
+    }, {
+      title: 'Eight',
       content: '221B Baker Street',
       ownerId: user.three._id,
       accessType: 'None',
@@ -136,43 +182,129 @@
       lastModified: Date.now(),
       dateCreated: Date.now(),
       accessId: role[2]._id
+    }, {
+      title: 'Nine',
+      content: 'Gniper and Gnasher',
+      ownerId: user.three._id,
+      accessType: 'None',
+      typeId: type[3]._id,
+      lastModified: Date.now(),
+      dateCreated: Date.now(),
+      accessId: role[0]._id
     }];
 
-    Documents.create(documents, function(err, docs) {
-      next(err, docs);
-    });
+    async.series([
+      function(callback) {
+        Documents.create(documents[0], function(err, docs) {
+          created.push(docs);
+          callback(err, docs);
+        });
+      },
+      function(callback) {
+        Documents.create(documents[1], function(err, docs) {
+          var date = new Date(docs.dateCreated);
+          date.setDate(date.getDate() + 1);
+          docs.dateCreated = date;
+          docs.save(callback(err, docs));
+          created.push(docs);
+        });
+      },
+      function(callback) {
+        Documents.create(documents[2], function(err, docs) {
+          var date = new Date(docs.dateCreated);
+          date.setDate(date.getDate() + 2);
+          docs.dateCreated = date;
+          docs.save(callback(err, docs));
+          created.push(docs);
+        });
+      },
+      function(callback) {
+        Documents.create(documents[3], function(err, docs) {
+          var date = new Date(docs.dateCreated);
+          date.setDate(date.getDate() + 3);
+          docs.dateCreated = date;
+          docs.save(callback(err, docs));
+          created.push(docs);
+        });
+      },
+      function(callback) {
+        Documents.create(documents[4], function(err, docs) {
+          var date = new Date(docs.dateCreated);
+          date.setDate(date.getDate() + 4);
+          docs.dateCreated = date;
+          docs.save(callback(err, docs));
+          created.push(docs);
+        });
+      },
+      function(callback) {
+        Documents.create(documents[5], function(err, docs) {
+          var date = new Date(docs.dateCreated);
+          date.setDate(date.getDate() + 5);
+          docs.dateCreated = date;
+          docs.save(callback(err, docs));
+          created.push(docs);
+        });
+      },
+      function(callback) {
+        Documents.create(documents[6], function(err, docs) {
+          var date = new Date(docs.dateCreated);
+          date.setDate(date.getDate() + 6);
+          docs.dateCreated = date;
+          docs.save(callback(err, docs));
+          created.push(docs);
+        });
+      },
+      function(callback) {
+        Documents.create(documents[7], function(err, docs) {
+          var date = new Date(docs.dateCreated);
+          date.setDate(date.getDate() + 7);
+          docs.dateCreated = date;
+          docs.save(callback(err, docs));
+          created.push(docs);
+        });
+      },
+      function(callback) {
+        Documents.create(documents[8], function(err, docs) {
+          var date = new Date(docs.dateCreated);
+          date.setDate(date.getDate() + 8);
+          docs.dateCreated = date;
+          docs.save(callback(err, docs));
+          created.push(docs);
+        });
+      }
+    ], next(created));
   }
 
   function cleardb(done) {
     async.waterfall([
       function(callback) {
-        Documents.remove({}, function(err, results) {
+        Documents.remove({}, function() {
           console.log('Document collection cleared');
           callback(null);
         });
       },
 
       function(callback) {
-        Roles.remove({}, function(err, results) {
+        Roles.remove({}, function() {
           console.log('Role collection cleared');
           callback(null);
         });
       },
 
       function(callback) {
-        Types.remove({}, function(err, results) {
+        Types.remove({}, function() {
           console.log('Type collection cleared');
           callback(null);
         });
       },
 
       function(callback) {
-        Users.remove({}, function(err, results) {
+        Users.remove({}, function() {
           console.log('Roles collection cleared');
           callback(null);
         });
       }
-    ], function(err) {
+    ], function() {
       done('Finished');
     });
   }
@@ -186,56 +318,40 @@
           });
         },
         function(rs, callback) {
-          console.log('Sasa ni types hapo');
+          console.log('Seeding Types');
           typeSeed(function(err, types) {
-            //console.log('Seeded types', types);
             callback(null, types, rs);
           });
         },
         function(rs, types, callback) {
-          console.log('tuko kwa roles mboss');
+          console.log('Seeding Roles');
           roleSeed(function(err, roles) {
-            //console.log('Seeded roles', roles);
             callback(null, types, rs, roles);
           });
         },
         function(rs, types, roles, callback) {
-          console.log('Users sasa ndio mambo');
+          console.log('Seeding Users');
           userSeed(roles, function(users) {
             callback(null, types, rs, roles, users);
           });
         },
 
         function(types, rs, roles, users, callback) {
-          //console.log('ROLES', roles, 'TYPES', types);
           documentSeed(users, roles, types, function(err, documents) {
-            // console.log('Huyu ndio user', users[0]);
-            // if (err) {
-            //   throw err;
-            // }
-            // else {
-            //   console.log('docs', documents);
-            //   server
-            //     .post('/users/login')
-            //     .send({
-            //       username: 'Sheshe',
-            //       password: 'gertrudenyenyeshi'
-            //     })
-            //     .end(function() {
-            //     });
-            // }
+            console.log('Seeding Documents');
             callback(null, documents, types, roles, users, rs);
           });
         }
       ], function(err, documents, types, roles, users, rs) {
         done({
           types: types,
-          rs: rs,
           roles: roles,
           users: users,
+          message: rs,
           documents: documents
         });
       });
-    },
+      done();
+    }
   };
 })();

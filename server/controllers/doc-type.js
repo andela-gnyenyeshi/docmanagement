@@ -1,26 +1,52 @@
 (function() {
   'use strict';
   var DocType = require('../models/doc-type');
+  var Roles = require('../models/role');
+  var roles;
 
   module.exports = {
     create: function(req, res) {
-      var doc = new DocType();
-      doc.type = req.body.type;
-      doc.save(function(err) {
+      // Check User role to see if it is Admin
+      Roles.findById(req.session.user.roleId, function(err, role) {
         if (err)
-          return res.status(500).send(err.errormessage || err);
-        return res.status(200).json({
-          'message': 'Type has been successfully created'
-        });
+          return res.status(500).send(err.errmessage || err);
+        roles = role.title;
+        if (roles === 'Admin') {
+          var doc = new DocType();
+          doc.type = req.body.type;
+          doc.save(function(err) {
+            if (err)
+              return res.status(500).send(err.errmessage || err);
+            return res.status(200).json({
+              'message': 'Type created'
+            });
+          });
+        } else {
+          return res.status(403).json({
+            'message': 'You need to be an Admin'
+          });
+        }
       });
     },
     find: function(req, res) {
-      DocType.find(function(err, all) {
+      Roles.findById(req.session.user.roleId, function(err, role) {
         if (err)
-          return res.status(500).send(err.errormessage || err);
-        return res.status(200).json(all);
+          return res.status(500).send(err.errmessage || err);
+        roles = role.title;
+        if (roles === 'Admin') {
+          DocType.find(function(err, roles) {
+            if (err)
+              return res.status(500).send(err.errmessage || err);
+            return res.status(200).json(roles);
+          });
+        } else {
+          return res.status(403).json({
+            'message': 'You need to be an Admin to perform this'
+          });
+        }
       });
     },
+    // Function to allow authenticated Users the respective rights.
     session: function(req, res, next) {
       if (req.session.user) {
         next();
@@ -31,37 +57,61 @@
       }
     },
     update: function(req, res) {
-      DocType.findById(req.params.doc_id, function(err, doc) {
-        if (err) {
+      Roles.findById(req.session.user.roleId, function(err, role) {
+        if (err)
           return res.status(500).send(err.errmessage || err);
-        } else {
-          if (req.body.type) {
-            doc.type = req.body.type;
-          }
-          doc.save(function(err) {
+        roles = role.title;
+        if (roles === 'Admin') {
+          DocType.findById(req.params.doc_id, function(err, doc) {
             if (err) {
-              return res.status(500).send(err.errmessage || err);
+              return res.status(500).sned(err.errmessage || err);
             } else {
-              return res.status(200).json({
-                'message': 'Type successfully updated'
+              if (req.body.type) {
+                doc.type = req.body.type;
+              }
+              doc.save(function(err) {
+                if (err) {
+                  return res.status(500).send(err.errmessage || err);
+                } else {
+                  return res.status(200).json({
+                    'message': 'Role successfully updated'
+                  });
+                }
               });
             }
+          });
+        } else {
+          return res.status(403).json({
+            'message': 'You must be an Admin to perform this action'
           });
         }
       });
     },
     delete: function(req, res) {
-      if (req.params.doc_id) {
-        DocType.remove({
-          _id: req.params.doc_id
-        }, function(err) {
-          if (err)
-            return res.status(500).send(err.errmessage || err);
-          return res.status(200).json({
-            'message': 'Type deleted'
-          });
-        });
-      }
+      Roles.findById(req.session.user.roleId, function(err, roles) {
+        if (err) {
+          return res.status(500).send(err.errmessage || err);
+        } else {
+          roles = roles.title;
+          if (roles === 'Admin') {
+            if (req.params.doc_id) {
+              Roles.remove({
+                _id: req.params.doc_id
+              }, function(err) {
+                if (err)
+                  return res.status(500).send(err.errmessage || err);
+                return res.status(200).json({
+                  'message': 'Role deleted'
+                });
+              });
+            }
+          } else {
+            return res.status(403).json({
+              'message': 'You must be an Admin to perform this action'
+            });
+          }
+        }
+      });
     }
   };
 })();

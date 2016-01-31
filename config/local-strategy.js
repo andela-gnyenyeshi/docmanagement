@@ -32,7 +32,7 @@ module.exports = function(passport) {
           return done(err);
         }
         if (user) {
-          console.log('Someone already has this Username or Email. Sorry -_-');
+          //console.log('Someone already has this Username or Email. Sorry -_-');
           return done(null, false);
         } else {
           //Create user if email is not in use
@@ -89,6 +89,7 @@ module.exports = function(passport) {
         return done(null, false);
       }
       // Success
+      user.password = null;
       return done(null, user);
     });
   }));

@@ -1,15 +1,18 @@
 (function() {
   'use strict';
   var Roles = require('../models/role');
-  var roles;
+  var roles, role1;
   module.exports = {
     create: function(req, res) {
+      // Check the role of user in session.
       Roles.findById(req.session.user.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
         if (roles === 'Admin') {
-          role.save(function(err) {
+          role1 = new Roles();
+          role1 = req.body.title;
+          role1.save(function(err) {
             if (err)
               return res.status(500).send(err.errmessage || err);
             return res.status(200).json({
@@ -39,6 +42,7 @@
     },
 
     session: function(req, res, next) {
+      // Check if there is a user in session
       if (req.session.user) {
         next();
       } else {
@@ -61,7 +65,7 @@
           });
         } else {
           return res.status(403).json({
-            'message': 'You need to be an Admin to perfom this'
+            'message': 'You need to be an Admin to perform this'
           });
         }
       });

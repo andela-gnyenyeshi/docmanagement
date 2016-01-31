@@ -1,3 +1,3 @@
 module.exports = {
-	'db' : 'mongodb://sheshe:sheshe@ds061974.mongolab.com:61974/dms'
+	'db' : 'mongodb://localhost:27017/dms'
 };
