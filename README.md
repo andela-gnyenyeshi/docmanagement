@@ -22,4 +22,4 @@ Installation.
 
 Testing.
 --------
-This application has been tested using supertest(https://www.npmjs.com/package/supertest), is a Super-agent driven library for testing Node.js HTTP servers using a fluent API and Jasmine(http://jasmine.github.io/2.0/introduction.html), which is a behavior-driven development framework for testing JavaScript code.
+This application has been tested using [supertest](https://www.npmjs.com/package/supertest), is a Super-agent driven library for testing Node.js HTTP servers using a fluent API and [Jasmine](http://jasmine.github.io/2.0/introduction.html), which is a behavior-driven development framework for testing JavaScript code.
