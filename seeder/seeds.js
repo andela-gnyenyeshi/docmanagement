@@ -108,7 +108,6 @@
   }
 
   function documentSeed(user, role, type, next) {
-    //console.log('ROLE', role, 'USER', user, 'TYPE', type);
     var created = [];
     var documents = [{
       title: 'One',

@@ -1,17 +1,17 @@
 (function() {
   'use strict';
   var request = require('supertest');
-  server = request.agent('http://127.0.0.1:4040');
+  var server = request.agent('http://127.0.0.1:4040');
   var helper = require('../seeder/seeds');
 
-  describe('Document Managemet System', function() {
+  describe('Document Management System', function() {
+      var user, documents;
     // beforeAll(function(done) {
     //   helper.starter(ok);
     //   done();
     // });
 
     describe('User creation', function() {
-      var user, documents;
       it('A new user can be created', function(done) {
         server
           .post('/users')
@@ -51,11 +51,14 @@
       it('The user has a first and last name', function(done) {
         expect(user.name.first).toBe('Sherlock');
         expect(user.name.last).toBe('Holmes');
+        expect(typeof user.name.first).toBe('string');
+        expect(typeof user.name.last).toBe('string');
         done();
       });
 
       it('User created must have a role', function(done) {
         expect(user.roleId).toBeDefined();
+        expect(typeof user.roleId).toBe('string');
         done();
       });
 
@@ -85,7 +88,7 @@
           });
       });
 
-      it('Authenticated user can see lists of all users in the system', function(done) {
+      it('Authenticated user can see list of all users in the system', function(done) {
         server
           .get('/users')
           .end(function(err, res) {
@@ -182,7 +185,7 @@
             done();
           });
       });
-      it('User with role of \'Viewer\' can view documents available to that role and are not private', function(done) {
+      it('User with role of Viewer can view documents available to that role and are not private', function(done) {
         server
           .get('/documents')
           .end(function(err, res) {
@@ -198,7 +201,7 @@
             done();
           });
       });
-      it('User can update documents they are owners or are the role', function(done) {
+      it('User can update documents they are owners of or are accessible to their role', function(done) {
         server
           .put('/documents/' + documents[1]._id)
           .send({
@@ -209,6 +212,7 @@
             expect(typeof res.status).toBe('number');
             expect(typeof res.body).toBe('object');
             expect(res.body).toBeDefined();
+            expect(documents[1].ownerId).toBe(user._id);
             expect(res.body.title).toBe('Prof Utonium');
             done();
           });
@@ -264,6 +268,14 @@
             done();
           });
       });
+      it('Documents set to private can be seen by the owner', function(done) {
+        server
+          .get('/documents/one')
+          .end(function(err, res) {
+            expect(res.body[1].accessType).toBe('Private');
+            done();
+          });
+      });
     });
 
     describe('Search', function() {
@@ -304,8 +316,6 @@
           server
             .get('/roles/' + user.roleId)
             .end(function(err, res) {
-              console.log(user);
-              console.log(documents);
               expect(res.status).toBe(403);
               expect(res.body.message).toBe('You need to be an Admin to perform this.');
               done();
