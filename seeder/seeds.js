@@ -109,9 +109,8 @@
 
   function documentSeed(user, role, type, next) {
     var created = [];
-    var a = Date.now();
-    var date = new Date(a);
-    // date.setDate(date.getDate() + 1);
+    var time = Date.now();
+    var date = new Date(time);
     var documents = [{
       title: 'One',
       content: 'Tony Stark',
@@ -198,89 +197,6 @@
     Documents.create(documents, function(err, docs) {
       next(err, docs);
     });
-
-    // async.series([
-    //   function(callback) {
-    //     Documents.create(documents[0], function(err, docs) {
-    //       created.push(docs);
-    //       callback(err, docs);
-    //     });
-    //   },
-    //   function(callback) {
-    //     Documents.create(documents[1], function(err, docs) {
-    //       var date = new Date(docs.dateCreated);
-    //       date.setDate(date.getDate() + 1);
-    //       docs.dateCreated = date;
-    //       docs.save(callback(err, docs));
-    //       created.push(docs);
-    //     });
-    //   },
-    //   function(callback) {
-    //     Documents.create(documents[2], function(err, docs) {
-    //       var date = new Date(docs.dateCreated);
-    //       date.setDate(date.getDate() + 2);
-    //       docs.dateCreated = date;
-    //       docs.save(callback(err, docs));
-    //       created.push(docs);
-    //     });
-    //   },
-    //   function(callback) {
-    //     Documents.create(documents[3], function(err, docs) {
-    //       var date = new Date(docs.dateCreated);
-    //       date.setDate(date.getDate() + 3);
-    //       docs.dateCreated = date;
-    //       docs.save(callback(err, docs));
-    //       created.push(docs);
-    //     });
-    //   },
-    //   function(callback) {
-    //     Documents.create(documents[4], function(err, docs) {
-    //       var date = new Date(docs.dateCreated);
-    //       date.setDate(date.getDate() + 4);
-    //       docs.dateCreated = date;
-    //       docs.save(callback(err, docs));
-    //       created.push(docs);
-    //     });
-    //   },
-    //   function(callback) {
-    //     Documents.create(documents[5], function(err, docs) {
-    //       var date = new Date(docs.dateCreated);
-    //       date.setDate(date.getDate() + 5);
-    //       docs.dateCreated = date;
-    //       docs.save(callback(err, docs));
-    //       created.push(docs);
-    //     });
-    //   },
-    //   function(callback) {
-    //     Documents.create(documents[6], function(err, docs) {
-    //       var date = new Date(docs.dateCreated);
-    //       date.setDate(date.getDate() + 6);
-    //       docs.dateCreated = date;
-    //       docs.save(callback(err, docs));
-    //       created.push(docs);
-    //     });
-    //   },
-    //   function(callback) {
-    //     Documents.create(documents[7], function(err, docs) {
-    //       var date = new Date(docs.dateCreated);
-    //       date.setDate(date.getDate() + 7);
-    //       docs.dateCreated = date;
-    //       docs.save(callback(err, docs));
-    //       created.push(docs);
-    //     });
-    //   },
-    //   function(callback) {
-    //     Documents.create(documents[8], function(err, docs) {
-    //       var date = new Date(docs.dateCreated);
-    //       date.setDate(date.getDate() + 8);
-    //       docs.dateCreated = date;
-    //       docs.save(callback(err, docs));
-    //       created.push(docs);
-    //     });
-    //   }
-    // ], function() {
-    //   next();
-    // });
   }
 
   function cleardb(done) {
