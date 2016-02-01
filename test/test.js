@@ -312,8 +312,9 @@
         });
         it('Documents can be searched by Date created', function(done) {
           server
-            .get('/documents/date' + '?from=2016-01-30&to=2016-02-10')
+            .get('/documents/date' + '?from=2016-01-30&to=2016-03-18')
             .end(function(err, res) {
+              console.log(res.body);
               assert.strictEqual(res.body.length, 2);
               assert.strictEqual(res.status, 200);
               expect(res.body).to.have.length(2);

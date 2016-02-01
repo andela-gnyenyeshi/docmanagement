@@ -19,10 +19,10 @@ Installation.
     ```
     This will install the required dependencies.
 5. Run
-```
-gulp
+  ```
+  gulp
 
-```
+  ```
 and enjoy.
 
 Testing.
