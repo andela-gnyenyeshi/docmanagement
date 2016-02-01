@@ -42,7 +42,7 @@
             password: 'gertrudenyenyeshi'
           })
           .end(function(err, res) {
-            expect(res.status).toEqual(449);
+            expect(res.status).toEqual(409);
             expect(res.body.error).toBe('Sign up failed. This Email or Username is already in use');
             done();
           });
@@ -291,7 +291,7 @@
         });
         it('Documents can be searched by Date created', function(done) {
           server
-            .get('/documents/date' + '?from=2016-01-30&to=2016-02-09')
+            .get('/documents/date' + '?from=2016-01-30&to=2016-02-10')
             .end(function(err, res) {
               expect(res.body.length).toBe(2);
               expect(res.status).toBe(200);

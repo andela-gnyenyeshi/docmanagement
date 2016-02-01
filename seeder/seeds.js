@@ -338,6 +338,7 @@
         function(types, rs, roles, users, callback) {
           documentSeed(users, roles, types, function(err, documents) {
             console.log('Seeding Documents');
+            console.log(documents);
             callback(null, documents, types, roles, users, rs);
           });
         }
@@ -350,7 +351,6 @@
           documents: documents
         });
       });
-      done();
     }
   };
 })();

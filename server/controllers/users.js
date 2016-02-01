@@ -36,7 +36,7 @@
         if (err)
           return res.status(500).send(err.errmessage || err);
         if (!user) {
-          return res.status(449).json({
+          return res.status(409).json({
             error: 'Sorry. Wrong username and password combination'
           });
         }
