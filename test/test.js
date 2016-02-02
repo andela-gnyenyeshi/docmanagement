@@ -196,7 +196,6 @@
           })
           .end(function(err, res) {
             assert.strictEqual(res.status, 500);
-            assert.strictEqual(res.body.errmsg, 'E11000 duplicate key error index: dms.documents.$title_1 dup key: { : "Utonium" }');
             expect(res.status).to.equal(500);
             expect(res.body.errmsg).to.have.a.string('E11000 duplicate key error index');
             done();
