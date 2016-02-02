@@ -22,16 +22,16 @@ Installation.
     This will install the required dependencies.
 5. Run
   ```
-  gulp
-
-  ```
-6. Run
-  ```
   npm test
 
   ```
   to run the tests.
+6. Run
+  ```
+  gulp
 
+  ```
+  Use [**Postman**](https://www.getpostman.com/) to consume the API.
 7. Well...enjoy.
 
 Testing.
