@@ -93,7 +93,6 @@
           })
           .expect("Content-type", /json/)
           .end(function(err, res) {
-            //console.log('ha',res.body);
             three = res.body;
             callback(null, one, two, three);
           });
@@ -108,9 +107,7 @@
   }
 
   function documentSeed(user, role, type, next) {
-    var created = [];
-    var time = Date.now();
-    var date = new Date(time);
+    var date = new Date();
     var documents = [{
       title: 'One',
       content: 'Tony Stark',
@@ -118,7 +115,7 @@
       accessType: 'None',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 1),
+      dateCreated: date.setDate(2),
       accessId: role[0]._id
     }, {
       title: 'Two',
@@ -127,7 +124,7 @@
       accessType: 'Private',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 2),
+      dateCreated:  date.setDate(3),
       accessId: role[0]._id
     }, {
       title: 'Three',
@@ -136,7 +133,7 @@
       accessType: 'None',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 3),
+      dateCreated:  date.setDate(4),
       accessId: role[1]._id
     }, {
       title: 'Four',
@@ -145,7 +142,7 @@
       accessType: 'None',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 4),
+      dateCreated:  date.setDate(5),
       accessId: role[1]._id
     }, {
       title: 'Five',
@@ -154,7 +151,7 @@
       accessType: 'Private',
       typeId: type[1]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 5),
+      dateCreated:  date.setDate(6),
       accessId: role[1]._id
     }, {
       title: 'Six',
@@ -163,7 +160,7 @@
       accessType: 'None',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 6),
+      dateCreated:  date.setDate(7),
       accessId: role[2]._id
     }, {
       title: 'Seven',
@@ -172,7 +169,7 @@
       accessType: 'Private',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 7),
+      dateCreated:  date.setDate(8),
       accessId: role[2]._id
     }, {
       title: 'Eight',
@@ -181,7 +178,7 @@
       accessType: 'None',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 8),
+      dateCreated:  date.setDate(9),
       accessId: role[2]._id
     }, {
       title: 'Nine',
@@ -190,7 +187,7 @@
       accessType: 'None',
       typeId: type[3]._id,
       lastModified: Date.now(),
-      dateCreated: date.setDate(date.getDate() + 9),
+      dateCreated:  date.setDate(10),
       accessId: role[0]._id
     }];
 
@@ -263,7 +260,6 @@
         function(types, rs, roles, users, callback) {
           documentSeed(users, roles, types, function(err, documents) {
             console.log('Seeding Documents');
-            console.log(documents);
             callback(null, documents, types, roles, users, rs);
           });
         }

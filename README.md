@@ -5,7 +5,7 @@ Document Management System is an application that helps users manage their docum
 
 Development
 -----------
-This application has been created using Nodejs environment and implementing Express as the routing framework and Mongoose to interact with MongoDB.
+This application has been created using Nodejs environment and implementing [**Express**](http://expressjs.com/) as the routing framework and [**Mongoose**](http://mongoosejs.com/), an object modeling package, to interact with MongoDB. Authentication has been implemented using [**Passport**](http://passportjs.org/). For this version, only local strategy has been used.
 
 Installation.
 -------------
