@@ -1,20 +1,15 @@
 (function() {
-  var request = require('supertest');
+  var supertest = require('supertest');
   var app = require('../app.js');
   var expect = require('chai').expect;
   var should = require('should');
   var assert = require('assert');
-  server = request.agent('http://127.0.0.1:4040');
+  server = supertest.agent('http://127.0.0.1:4040');
   var helper = require('../seeder/seeds');
 
   describe('Document Management System', function() {
       var user, documents;
-    // beforeAll(function(done) {
-    //   helper.starter(ok);
-    //   done();
-    // });
-
-    describe('User creation', function() {
+    describe('User', function() {
       it('A new user can be created', function(done) {
         server
           .post('/users')
@@ -137,9 +132,14 @@
         server
           .get('/users/logout')
           .end(function(err, res) {
-            //expect(res.body).to.equal({});
             assert.deepEqual(res.body, {});
-            done();
+            server
+              .get('/users')
+              .end(function(err, res) {
+                assert.strictEqual(res.status, 401);
+                assert.strictEqual(res.body.error, 'You are not logged in');
+                done();
+              });
           });
       });
     });
@@ -201,7 +201,7 @@
             done();
           });
       });
-      it('User with role of Viewer can view documents available to that role and are not private', function(done) {
+      it('User with any role can view documents available to that role and are not private', function(done) {
         server
           .get('/documents')
           .end(function(err, res) {
@@ -304,7 +304,7 @@
           server
             .get('/documents/' + user.roleId)
             .end(function(err, res) {
-              assert.strictEqual(res.body[0].accessId, res.body[0].accessId);
+              assert.strictEqual(res.body[0].accessId, res.body[1].accessId);
               expect(res.body).to.have.length.above(0);
               done();
             });
@@ -313,7 +313,6 @@
           server
             .get('/documents/date' + '?from=2016-01-30&to=2016-02-11')
             .end(function(err, res) {
-              console.log(res.body);
               assert.strictEqual(res.body.length, 2);
               assert.strictEqual(res.status, 200);
               expect(res.body).to.have.length(2);
@@ -328,19 +327,55 @@
         it('Role can be created by Admin only', function(done) {
           server
             .post('/roles')
+            .send({
+              title: 'Outsider'
+            })
             .end(function(err, res) {
               assert.strictEqual(res.status, 403);
               assert.strictEqual(res.body.message, 'You need to be an Admin');
-              done();
+              server
+                .post('/users/login')
+                .send({
+                  username: 'Sheshe',
+                  password: 'gertrudenyenyeshi'
+                })
+                .end(function(err, res) {
+                  assert.strictEqual(res.status, 200);
+                  server
+                    .post('/roles')
+                    .send({
+                      title: 'Outsider'
+                    })
+                    .end(function(err, res) {
+                      assert.strictEqual(res.body.message, 'Role created');
+                      server
+                        .get('/users/logout')
+                        .end(function(err, res) {
+                          assert.strictEqual(res.body, {});
+                          done();
+                        });
+                      done();
+                    });
+                });
             });
         });
         it('Role can be updated by Admin only', function(done) {
           server
-            .get('/roles/' + user.roleId)
-            .end(function(err, res) {
-              assert.strictEqual(res.status, 403);
-              assert.strictEqual(res.body.message, 'You need to be an Admin to perform this.');
-              done();
+            .post('/users/login')
+            .send({
+              username: 'Kidoti',
+              password: 'cynthiaasingwa'
+            })
+            .end(function(err, res){
+              user = res.body;
+              assert.strictEqual(res.status, 200);
+              server
+                .get('/roles/' + user.roleId)
+                .end(function(err, res) {
+                  assert.strictEqual(res.status, 403);
+                  assert.strictEqual(res.body.message, 'You need to be an Admin to perform this.');
+                  done();
+                });
             });
         });
         it('Roles can be searched by Admin only', function(done) {
@@ -369,6 +404,9 @@
         it('Type can be created by Admin only', function(done) {
           server
             .post('/types')
+            .send({
+              type: 'Exclusive'
+            })
             .end(function(err, res) {
               assert.strictEqual(res.status, 403);
               assert.strictEqual(res.body.message, 'You need to be an Admin');

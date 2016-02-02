@@ -11,7 +11,7 @@
         roles = role.title;
         if (roles === 'Admin') {
           role1 = new Roles();
-          role1 = req.body.title;
+          role1.title = req.body.title;
           role1.save(function(err) {
             if (err)
               return res.status(500).send(err.errmessage || err);

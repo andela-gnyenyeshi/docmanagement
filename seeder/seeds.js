@@ -25,7 +25,6 @@
   }
 
   function typeSeed(next) {
-    //console.log('seeding types');
     var types = [{
       type: 'General'
     }, {
@@ -57,7 +56,6 @@
           })
           .expect("Content-type", /json/)
           .end(function(err, res) {
-            //console.log('kok',res.body);
             one = res.body;
             callback(null, one);
           });
@@ -75,7 +73,6 @@
           })
           .expect("Content-type", /json/)
           .end(function(err, res) {
-            //console.log('haha',res.body);
             two = res.body;
             callback(null, two, one);
           });

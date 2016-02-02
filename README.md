@@ -25,7 +25,14 @@ Installation.
   gulp
 
   ```
-and enjoy.
+6. Run
+  ```
+  npm test
+
+  ```
+  to run the tests.
+
+7. Well...enjoy.
 
 Testing.
 --------
