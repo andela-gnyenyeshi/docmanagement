@@ -1,3 +1,5 @@
+######Circle CI : [![Circle CI](https://circleci.com/gh/andela-gnyenyeshi/docmanagement.svg?style=svg)](https://circleci.com/gh/andela-gnyenyeshi/docmanagement)
+
 DOCUMENT MANAGEMENT SYSTEM
 ==========================
 
