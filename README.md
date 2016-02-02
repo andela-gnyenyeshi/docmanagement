@@ -28,3 +28,5 @@ and enjoy.
 Testing.
 --------
 This application has been tested using [**supertest**](https://www.npmjs.com/package/supertest), which is a Super-agent driven library for testing Node.js HTTP servers using a fluent API and [**Mocha**](https://mochajs.org), which is a feature-rich JavaScript test framework running on Node.js and the browser, making asynchronous testing simple and fun.
+
+circleci tests: [![Circle CI](https://circleci.com/gh/andela-gnyenyeshi/docmanagement.svg?style=svg)](https://circleci.com/gh/andela-gnyenyeshi/docmanagement)
