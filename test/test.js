@@ -1,7 +1,10 @@
 (function() {
-  'use strict';
   var request = require('supertest');
-  var server = request.agent('http://127.0.0.1:4040');
+  var app = require('../app.js');
+  var expect = require('chai').expect;
+  var should = require('should');
+  var assert = require('assert');
+  server = request.agent('http://127.0.0.1:4040');
   var helper = require('../seeder/seeds');
 
   describe('Document Management System', function() {
@@ -23,10 +26,11 @@
             password: 'gertrudenyenyeshi'
           })
           .end(function(err, res) {
-            expect(res.status).toEqual(200);
+            assert.strictEqual(res.status, 200);
             user = res.body;
-            expect(res.body.name.first).toBe('Sherlock');
-            expect(typeof res.body.name.first).toBe('string');
+            assert.strictEqual(res.body.name.first, 'Sherlock');
+            expect(res.body.name.first).to.have.string('Sherlock');
+            expect(res.body.name.first).to.be.a('string');
             done();
           });
       });
@@ -42,23 +46,25 @@
             password: 'gertrudenyenyeshi'
           })
           .end(function(err, res) {
-            expect(res.status).toEqual(449);
-            expect(res.body.error).toBe('Sign up failed. This Email or Username is already in use');
+            expect(res.status).to.equal(449);
+            assert.strictEqual(res.status, 449);
+            assert.strictEqual(res.body.error, 'Sign up failed. This Email or Username is already in use');
+            expect(res.body.error).to.have.string('Sign up failed. This Email or Username is already in use');
             done();
           });
       });
 
       it('The user has a first and last name', function(done) {
-        expect(user.name.first).toBe('Sherlock');
-        expect(user.name.last).toBe('Holmes');
-        expect(typeof user.name.first).toBe('string');
-        expect(typeof user.name.last).toBe('string');
+        assert.strictEqual(user.name.first, 'Sherlock');
+        assert.strictEqual(user.name.last, 'Holmes');
+        expect(user.name.first).to.be.a('string');
+        expect(user.name.last).to.be.a('string');
         done();
       });
 
       it('User created must have a role', function(done) {
-        expect(user.roleId).toBeDefined();
-        expect(typeof user.roleId).toBe('string');
+        expect(user.roleId).to.not.be.undefined;
+        expect(user.roleId).to.be.a('string');
         done();
       });
 
@@ -66,8 +72,10 @@
         server
           .get('/users')
           .end(function(err, res) {
-            expect(res.status).toBe(401);
-            expect(res.body.error).toBe('You are not logged in');
+            assert.strictEqual(res.status, 401);
+            assert.strictEqual(res.body.error, 'You are not logged in');
+            expect(res.body.error).to.be.a('string');
+            expect(res.body.error).to.have.a.string('You are not logged in');
             done();
           });
       });
@@ -81,19 +89,20 @@
             password: 'gertrudenyenyeshi'
           })
           .end(function(err, res) {
-            expect(res.status).toBe(200);
-            expect(res.body._id).toBeDefined();
-            expect(typeof res.body).toBe('object');
+            assert.strictEqual(res.status, 200);
+            expect(res.body._id).to.not.be.undefined;
+            expect(res.body).to.be.a('object');
             done();
           });
       });
-
+      //
       it('Authenticated user can see list of all users in the system', function(done) {
         server
           .get('/users')
           .end(function(err, res) {
-            expect(res.status).toBe(200);
-            expect(res.body.length).toBeGreaterThan(0);
+            assert.strictEqual(res.status, 200);
+            expect(res.body).to.have.length.above(0);
+            expect(res.body).to.be.instanceof(Array);
             done();
           });
       });
@@ -104,8 +113,10 @@
             lastname: 'Smaug'
           })
           .end(function(err, res) {
-            expect(res.status).toBe(200);
-            expect(res.body.name.last).toBe('Smaug');
+            assert.strictEqual(res.status, 200);
+            assert.strictEqual(res.body.name.last, 'Smaug');
+            expect(res.body.name.last).to.have.a.string('Smaug');
+            expect(res.body.name.last).to.be.a('string');
             done();
           });
       });
@@ -114,8 +125,10 @@
         server
           .delete('/users/' + user._id)
           .end(function(err, res) {
-            expect(res.status).toBe(403);
-            expect(res.body.message).toBe('You need to be an Admin to perform this action');
+            assert.strictEqual(res.status, 403);
+            assert.strictEqual(res.body.message, 'You need to be an Admin to perform this action');
+            expect(res.status).to.equal(403);
+            expect(res.body.message).to.have.a.string('You need to be an Admin to perform this action');
             done();
           });
       });
@@ -124,7 +137,8 @@
         server
           .get('/users/logout')
           .end(function(err, res) {
-            expect(res.body).toEqual({});
+            //expect(res.body).to.equal({});
+            assert.deepEqual(res.body, {});
             done();
           });
       });
@@ -139,8 +153,9 @@
             content: 'TightenVille'
           })
           .end(function(err, res) {
-            expect(res.status).toBe(401);
-            expect(res.body.error).toBe('You are not logged in');
+            assert.strictEqual(res.status, 401);
+            assert.strictEqual(res.body.error, 'You are not logged in');
+            expect(res.body.error).to.be.a('string');
             done();
           });
       });
@@ -153,8 +168,8 @@
           })
           .end(function(err, res) {
             user = res.body;
-            expect(res.status).toBe(200);
-            expect(typeof res.body).toBe('object');
+            assert.strictEqual(res.status, 200);
+            expect(res.body).to.be.a('object');
             server
               .post('/documents')
               .send({
@@ -162,12 +177,12 @@
                 content: 'TownsVille'
               })
               .end(function(err, res) {
-                expect(res.status).toBe(200);
-                expect(res.body).toBeDefined();
-                expect(typeof res.body).toBe('object');
-                expect(res.body.content).toBe('TownsVille');
-                expect(res.body.title).toBe('Utonium');
-                expect(res.body.ownerId).toBe(user._id);
+                assert.strictEqual(res.status, 200);
+                assert.strictEqual(res.body.content, 'TownsVille');
+                assert.strictEqual(res.body.ownerId, user._id);
+                assert.strictEqual(res.body.title, 'Utonium');
+                expect(res.body).to.not.be.undefined;
+                expect(res.body).to.be.a('object');
                 done();
               });
           });
@@ -180,8 +195,10 @@
             content: 'Power Puff'
           })
           .end(function(err, res) {
-            expect(res.status).toBe(500);
-            expect(res.body.errmsg).toBe('E11000 duplicate key error index: dms.documents.$title_1 dup key: { : "Utonium" }');
+            assert.strictEqual(res.status, 500);
+            assert.strictEqual(res.body.errmsg, 'E11000 duplicate key error index: dms.documents.$title_1 dup key: { : "Utonium" }');
+            expect(res.status).to.equal(500);
+            expect(res.body.errmsg).to.have.a.string('E11000 duplicate key error index');
             done();
           });
       });
@@ -190,14 +207,15 @@
           .get('/documents')
           .end(function(err, res) {
             documents = res.body;
-            expect(res.status).toBe(200);
-            expect(res.body.length).toBe(3);
-            expect(res.body[0].accessId).toBe(user.roleId);
-            expect(res.body[1].accessId).toBe(user.roleId);
-            expect(res.body[1].accessId).toBe(user.roleId);
-            expect(res.body[0].accessType).toBe('None');
-            expect(res.body[1].accessType).toBe('None');
-            expect(res.body[1].accessType).toBe('None');
+            assert.strictEqual(res.status, 200);
+            assert.strictEqual(res.body[0].accessId, user.roleId);
+            assert.strictEqual(res.body[1].accessId, user.roleId);
+            assert.strictEqual(res.body[2].accessId, user.roleId);
+            assert.strictEqual(res.body[0].accessType, 'None');
+            assert.strictEqual(res.body[1].accessType, 'None');
+            assert.strictEqual(res.body[2].accessType, 'None');
+            expect(res.body.length).to.equal(3);
+            expect(res.body).to.have.length.above(0);
             done();
           });
       });
@@ -208,12 +226,12 @@
             title: 'Prof Utonium'
           })
           .end(function(err, res) {
-            expect(res.status).toBe(200);
-            expect(typeof res.status).toBe('number');
-            expect(typeof res.body).toBe('object');
-            expect(res.body).toBeDefined();
-            expect(documents[1].ownerId).toBe(user._id);
-            expect(res.body.title).toBe('Prof Utonium');
+            assert.strictEqual(res.status, 200);
+            assert.strictEqual(res.body.title, 'Prof Utonium');
+            assert.strictEqual(documents[1].ownerId, user._id);
+            expect(typeof res.status).to.equal('number');
+            expect(typeof res.body).to.equal('object');
+            expect(res.body).to.not.be.undefined;
             done();
           });
       });
@@ -221,8 +239,8 @@
         server
           .delete('/documents/' + documents[0]._id)
           .end(function(err, res) {
-            expect(res.status).toBe(403);
-            expect(res.body.message).toBe('You need to be Owner or Admin to delete this Document');
+            assert.strictEqual(res.status, 403);
+            assert.strictEqual(res.body.message, 'You need to be Owner or Admin to delete this Document');
             done();
           });
       });
@@ -230,8 +248,8 @@
         server
           .delete('/documents/' + documents[1]._id)
           .end(function(err, res) {
-            expect(res.status).toBe(200);
-            expect(res.body.message).toBe('Document has been deleted');
+            assert.strictEqual(res.status, 200);
+            assert.strictEqual(res.body.message, 'Document has been deleted');
             done();
           });
       });
@@ -239,8 +257,9 @@
         server
           .get('/documents/?limit=2')
           .end(function(err, res) {
-            expect(res.status).toBe(200);
-            expect(res.body.length).toBe(2);
+            assert.strictEqual(res.status, 200);
+            assert.strictEqual(res.body.length, 2);
+            expect(res.body).to.have.length.above(1);
             done();
           });
       });
@@ -248,9 +267,9 @@
         server
           .get('/documents')
           .end(function(err, res) {
-            expect(res.status).toBe(200);
-            expect(res.body[0].dateCreated).toBeGreaterThan(res.body[1].dateCreated);
-            expect(typeof res.body).toBe('object');
+            assert.strictEqual(res.status, 200);
+            (res.body[0].dateCreated).should.be.above(res.body[1].dateCreated);
+            expect(res.body).to.be.instanceof(Array);
             done();
           });
       });
@@ -258,12 +277,13 @@
         server
           .get('/documents/one')
           .end(function(err, res) {
-            expect(res.status).toBe(200);
-            expect(res.body.length).toBe(3);
-            expect(res.body[0].ownerId).toBe(user._id);
-            expect(res.body[1].ownerId).toBe(user._id);
-            expect(res.body[2].ownerId).toBe(user._id);
-            expect(typeof res.body).toBe('object');
+            assert.strictEqual(res.status, 200);
+            assert.strictEqual(res.body.length, 3);
+            expect(res.body).to.have.length.above(1);
+            assert.strictEqual(res.body[0].ownerId, user._id);
+            assert.strictEqual(res.body[1].ownerId, user._id);
+            assert.strictEqual(res.body[2].ownerId, user._id);
+            expect(res.body).to.be.instanceof(Array);
             documents = res.body;
             done();
           });
@@ -272,7 +292,8 @@
         server
           .get('/documents/one')
           .end(function(err, res) {
-            expect(res.body[1].accessType).toBe('Private');
+            assert.strictEqual(res.body[1].accessType, 'Private');
+            expect(res.body[1].accessType).to.be.a('string');
             done();
           });
       });
@@ -284,17 +305,19 @@
           server
             .get('/documents/' + user.roleId)
             .end(function(err, res) {
-              expect(res.body[0].accessId).toBe(res.body[0].accessId);
-              expect(res.body.length).toBeGreaterThan(0);
+              assert.strictEqual(res.body[0].accessId, res.body[0].accessId);
+              expect(res.body).to.have.length.above(0);
               done();
             });
         });
         it('Documents can be searched by Date created', function(done) {
           server
-            .get('/documents/date' + '?from=2016-01-30&to=2016-02-09')
+            .get('/documents/date' + '?from=2016-01-30&to=2016-02-11')
             .end(function(err, res) {
-              expect(res.body.length).toBe(2);
-              expect(res.status).toBe(200);
+              console.log(res.body);
+              assert.strictEqual(res.body.length, 2);
+              assert.strictEqual(res.status, 200);
+              expect(res.body).to.have.length(2);
               done();
             });
         });
@@ -307,8 +330,8 @@
           server
             .post('/roles')
             .end(function(err, res) {
-              expect(res.status).toBe(403);
-              expect(res.body.message).toBe('You need to be an Admin');
+              assert.strictEqual(res.status, 403);
+              assert.strictEqual(res.body.message, 'You need to be an Admin');
               done();
             });
         });
@@ -316,8 +339,8 @@
           server
             .get('/roles/' + user.roleId)
             .end(function(err, res) {
-              expect(res.status).toBe(403);
-              expect(res.body.message).toBe('You need to be an Admin to perform this.');
+              assert.strictEqual(res.status, 403);
+              assert.strictEqual(res.body.message, 'You need to be an Admin to perform this.');
               done();
             });
         });
@@ -325,8 +348,8 @@
           server
             .get('/roles')
             .end(function(err, res) {
-              expect(res.status).toBe(403);
-              expect(res.body.message).toBe('You need to be an Admin to perform this');
+              assert.strictEqual(res.status, 403);
+              assert.strictEqual(res.body.message, 'You need to be an Admin to perform this');
               done();
             });
         });
@@ -334,8 +357,8 @@
           server
             .delete('/roles/' + user.roleId)
             .end(function(err, res) {
-              expect(res.status).toBe(403);
-              expect(res.body.message).toBe('You must be an Admin to perform this action');
+              assert.strictEqual(res.status, 403);
+              assert.strictEqual(res.body.message, 'You must be an Admin to perform this action');
               done();
             });
         });
@@ -348,8 +371,8 @@
           server
             .post('/types')
             .end(function(err, res) {
-              expect(res.status).toBe(403);
-              expect(res.body.message).toBe('You need to be an Admin');
+              assert.strictEqual(res.status, 403);
+              assert.strictEqual(res.body.message, 'You need to be an Admin');
               done();
             });
         });
@@ -357,8 +380,8 @@
           server
             .get('/roles/' + documents[0].typeId)
             .end(function(err, res) {
-              expect(res.status).toBe(403);
-              expect(res.body.message).toBe('You need to be an Admin to perform this.');
+              assert.strictEqual(res.status, 403);
+              assert.strictEqual(res.body.message, 'You need to be an Admin to perform this.');
               done();
             });
         });
@@ -366,8 +389,8 @@
           server
             .get('/types')
             .end(function(err, res) {
-              expect(res.status).toBe(403);
-              expect(res.body.message).toBe('You need to be an Admin to perform this');
+              assert.strictEqual(res.status, 403);
+              assert.strictEqual(res.body.message, 'You need to be an Admin to perform this');
               done();
             });
         });
@@ -375,13 +398,12 @@
           server
             .delete('/types/' + documents[2].typeId)
             .end(function(err, res) {
-              expect(res.status).toBe(403);
-              expect(res.body.message).toBe('You must be an Admin to perform this action');
+              assert.strictEqual(res.status, 403);
+              assert.strictEqual(res.body.message, 'You must be an Admin to perform this action');
               done();
             });
         });
       });
     });
-
   });
-})();
+  })();

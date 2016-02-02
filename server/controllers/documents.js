@@ -110,7 +110,7 @@
         accessId: req.session.user.roleId,
         dateCreated: {
           $gte: new Date(req.query.from),
-          $lt: new Date(req.query.to) || new Date()
+          $lt: new Date(req.query.to)
         }
       }, function(err, documents) {
         if (err) {

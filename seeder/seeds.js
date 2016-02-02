@@ -93,7 +93,6 @@
           })
           .expect("Content-type", /json/)
           .end(function(err, res) {
-            //console.log('ha',res.body);
             three = res.body;
             callback(null, one, two, three);
           });
@@ -108,7 +107,7 @@
   }
 
   function documentSeed(user, role, type, next) {
-    var created = [];
+    var date = new Date();
     var documents = [{
       title: 'One',
       content: 'Tony Stark',
@@ -116,7 +115,7 @@
       accessType: 'None',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated: date.setDate(2),
       accessId: role[0]._id
     }, {
       title: 'Two',
@@ -125,7 +124,7 @@
       accessType: 'Private',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated:  date.setDate(3),
       accessId: role[0]._id
     }, {
       title: 'Three',
@@ -134,7 +133,7 @@
       accessType: 'None',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated:  date.setDate(4),
       accessId: role[1]._id
     }, {
       title: 'Four',
@@ -143,7 +142,7 @@
       accessType: 'None',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated:  date.setDate(5),
       accessId: role[1]._id
     }, {
       title: 'Five',
@@ -152,7 +151,7 @@
       accessType: 'Private',
       typeId: type[1]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated:  date.setDate(6),
       accessId: role[1]._id
     }, {
       title: 'Six',
@@ -161,7 +160,7 @@
       accessType: 'None',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated:  date.setDate(7),
       accessId: role[2]._id
     }, {
       title: 'Seven',
@@ -170,7 +169,7 @@
       accessType: 'Private',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated:  date.setDate(8),
       accessId: role[2]._id
     }, {
       title: 'Eight',
@@ -179,7 +178,7 @@
       accessType: 'None',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated:  date.setDate(9),
       accessId: role[2]._id
     }, {
       title: 'Nine',
@@ -188,90 +187,13 @@
       accessType: 'None',
       typeId: type[3]._id,
       lastModified: Date.now(),
-      dateCreated: Date.now(),
+      dateCreated:  date.setDate(10),
       accessId: role[0]._id
     }];
 
-    async.series([
-      function(callback) {
-        Documents.create(documents[0], function(err, docs) {
-          created.push(docs);
-          callback(err, docs);
-        });
-      },
-      function(callback) {
-        Documents.create(documents[1], function(err, docs) {
-          var date = new Date(docs.dateCreated);
-          date.setDate(date.getDate() + 1);
-          docs.dateCreated = date;
-          docs.save(callback(err, docs));
-          created.push(docs);
-        });
-      },
-      function(callback) {
-        Documents.create(documents[2], function(err, docs) {
-          var date = new Date(docs.dateCreated);
-          date.setDate(date.getDate() + 2);
-          docs.dateCreated = date;
-          docs.save(callback(err, docs));
-          created.push(docs);
-        });
-      },
-      function(callback) {
-        Documents.create(documents[3], function(err, docs) {
-          var date = new Date(docs.dateCreated);
-          date.setDate(date.getDate() + 3);
-          docs.dateCreated = date;
-          docs.save(callback(err, docs));
-          created.push(docs);
-        });
-      },
-      function(callback) {
-        Documents.create(documents[4], function(err, docs) {
-          var date = new Date(docs.dateCreated);
-          date.setDate(date.getDate() + 4);
-          docs.dateCreated = date;
-          docs.save(callback(err, docs));
-          created.push(docs);
-        });
-      },
-      function(callback) {
-        Documents.create(documents[5], function(err, docs) {
-          var date = new Date(docs.dateCreated);
-          date.setDate(date.getDate() + 5);
-          docs.dateCreated = date;
-          docs.save(callback(err, docs));
-          created.push(docs);
-        });
-      },
-      function(callback) {
-        Documents.create(documents[6], function(err, docs) {
-          var date = new Date(docs.dateCreated);
-          date.setDate(date.getDate() + 6);
-          docs.dateCreated = date;
-          docs.save(callback(err, docs));
-          created.push(docs);
-        });
-      },
-      function(callback) {
-        Documents.create(documents[7], function(err, docs) {
-          var date = new Date(docs.dateCreated);
-          date.setDate(date.getDate() + 7);
-          docs.dateCreated = date;
-          docs.save(callback(err, docs));
-          created.push(docs);
-        });
-      },
-      function(callback) {
-        Documents.create(documents[8], function(err, docs) {
-          var date = new Date(docs.dateCreated);
-          date.setDate(date.getDate() + 8);
-          docs.dateCreated = date;
-          docs.save(callback(err, docs));
-          created.push(docs);
-        });
-      }
-    ], next(created));
+    Documents.create(documents, function(err, docs) {
+      next(err, docs);
+    });
   }
 
   function cleardb(done) {
@@ -350,7 +272,6 @@
           documents: documents
         });
       });
-      done();
     }
   };
 })();
