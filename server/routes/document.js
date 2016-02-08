@@ -1,15 +1,18 @@
 (function() {
   'use strict';
   var Documents = require('../controllers/documents.js');
+  var User = require('../controllers/users.js');
 
   module.exports = function(app) {
     app.use(Documents.session);
-    app.post('/documents', Documents.create);
-    app.get('/documents', Documents.find);
-    app.get('/documents/date', Documents.findByDate);
-    app.get('/documents/one', Documents.findByUser);
-    app.get('/documents/:access_id', Documents.findByRole);
-    app.delete('/documents/:document_id', Documents.delete);
-    app.put('/documents/:document_id', Documents.update);
+    app.post('/api/documents', Documents.create);
+    app.get('/api/documents', Documents.find);
+    //app.get('/api/documents', Documents.findByDate);
+    app.get('/api/users/:user_id/documents', User.getDocs);
+    app.get('/api/:access_id/documents', Documents.findByRole);
+    app.route('/api/documents/:document_id')
+      .put(Documents.update)
+      .get(Documents.findADoc)
+      .delete(Documents.delete);
   };
 })();

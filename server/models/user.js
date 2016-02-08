@@ -33,6 +33,10 @@
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Role',
       required: true
+    },
+    loggedIn: {
+      type: Boolean,
+      Default: false
     }
   });
 

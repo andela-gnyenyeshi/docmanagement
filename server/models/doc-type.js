@@ -8,8 +8,7 @@
   type: {
    type: String,
    unique: true,
-   default: 'General',
-   enum: ['Business', 'Personal', 'Education', 'General']
+   default: 'General'
   }
  }));
 })();

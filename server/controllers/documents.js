@@ -4,18 +4,19 @@
     Role = require('../models/role'),
     Type = require('../models/doc-type');
   var roles;
+  var jwt = require('jsonwebtoken');
+  var secretKey = require('../../config/config').secret;
 
   module.exports = {
     create: function(req, res) {
-      if (req.session.user) {
         var document = new Document();
         document.ownerId = req.session.user._id;
         document.title = req.body.title;
         document.content = req.body.content;
         document.dateCreated = Date.now();
-        document.accessType = req.body.accessType || "None";
         document.lastModified = Date.now();
-      }
+        document.accessType = req.body.accessType || "None";
+
       // Get RoleId of the role assigned to the document
       Role.find({
         title: req.body.access || 'Viewer'
@@ -34,7 +35,10 @@
             document.typeId = type[0]._id;
             document.save(function(err, document) {
               if (err)
-                return res.status(500).send(err.errormessage || err);
+                return res.status(409).send({
+                  'error': err.errmessage || err,
+                  'message': 'Document cannot be duplicate'
+                });
               return res.status(200).json(document);
             });
           });
@@ -43,46 +47,105 @@
     },
 
     session: function(req, res, next) {
-      // Check if User is logged in and in session object
-      if (req.session.user) {
-        next();
-      } else {
-        return res.status(401).json({
-          error: 'You are not logged in'
+      var token = req.headers['x-access-token'];
+      if(token) {
+        jwt.verify(token, secretKey, function(err, decoded) {
+          if (!err) {
+            req.decoded = decoded;
+            next();
+          } else {
+            return res.status(401).send({
+              message: 'Failed to Authenticate'
+            });
+          }
         });
+      } else {
+        return res.status(401).send({message: 'You are not authenticated'});
       }
     },
 
     find: function(req, res) {
       // Users can only view documents available to their roles and are not private.
-      Document.find({
-        accessType: 'None',
-        accessId: req.session.user.roleId
-      }).limit(req.query.limit).sort({
-        dateCreated: -1
-      }).exec(function(err, document) {
-        if (err) {
-          return res.status(500).send(err.errmessage || err);
-        } else {
-          return res.status(200).json(document);
-        }
-      });
+      if (req.query.from) {
+        Document.find({
+          accessType: 'None',
+          accessId: req.session.user.roleId,
+          dateCreated: {
+            $gte: new Date(req.query.from),
+            $lt: new Date(req.query.to)
+          }
+        }, function(err, documents) {
+          if (err) {
+            return res.status(500).send(err.errmessage || err);
+          } else if (documents.length < 1) {
+            res.status(404).json({
+              'message': 'No documents found'
+            });
+          } else {
+            res.status(200).json(documents);
+          }
+        });
+      } else if (req.query.title) {
+        Document.find({
+          accessType: 'None',
+          accessId: req.session.user.roleId,
+          title: req.query.title
+        }, function(err, documents) {
+          if (err) {
+            return res.status(500).send(err.errmessage || err);
+          } else if (documents.length < 1) {
+            res.status(404).json({
+              'message': 'No documents found'
+            });
+          } else {
+            res.status(200).json(documents);
+          }
+        });
+      } else {
+        Document.find({
+          accessType: 'None',
+          accessId: req.session.user.roleId
+        }).limit(req.query.limit).sort({
+          dateCreated: -1
+        }).exec(function(err, document) {
+          if (err) {
+            return res.status(500).send(err.errmessage || err);
+          } else {
+            return res.status(200).json(document);
+          }
+        });
+      }
     },
 
-    findByUser: function(req, res) {
+    findADoc: function(req, res) {
       Document.find({
-        ownerId: req.session.user._id
-      }).sort({
-        dateCreated: -1
-      }).exec(function(err, docs) {
-        if (err) {
-          return res.status(500).send(err.errmessage || err);
-        } else if (docs && docs.length) {
-          return res.status(200).json(docs);
-        } else {
-          return res.status(404).json({
-            'message': 'No documents found'
+        _id: req.params.document_id
+      }).exec(function(err, documents) {
+        if (documents[0].id !== req.session.user._id) {
+          Document.find({
+            _id : req.params.document_id,
+            accessId: req.session.user.roleId,
+            accessType: 'None'
+          }).exec(function(err, docs) {
+            if (docs.length < 1) {
+              return res.status(200).json({
+                'message': 'This document does not exist or you are  not allowed to view it'
+              });
+            }
+            if (err) {
+              return res.status(500).send(err.errmessage || err);
+            } else {
+              return res.status(200).json(docs);
+            }
           });
+        } else {
+          if (documents.length < 1) {
+            return res.status(404).json({
+              'message' : 'No documents are available'
+            });
+          } else {
+            return res.status(200).json(documents);
+          }
         }
       });
     },
@@ -100,27 +163,6 @@
           return res.status(404).json({
             'message': 'No documents found'
           });
-        }
-      });
-    },
-
-    findByDate: function(req, res) {
-      Document.find({
-        accessType: 'None',
-        accessId: req.session.user.roleId,
-        dateCreated: {
-          $gte: new Date(req.query.from),
-          $lt: new Date(req.query.to)
-        }
-      }, function(err, documents) {
-        if (err) {
-          return res.status(500).send(err.errmessage || err);
-        } else if (documents.length < 1) {
-          res.status(404).json({
-            'message': 'No documents found'
-          });
-        } else {
-          res.status(200).json(documents);
         }
       });
     },

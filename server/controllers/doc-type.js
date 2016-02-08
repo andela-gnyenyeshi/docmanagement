@@ -2,6 +2,8 @@
   'use strict';
   var DocType = require('../models/doc-type');
   var Roles = require('../models/role');
+  var jwt = require('jsonwebtoken');
+  var secretKey = require('../../config/config').secret;
   var roles;
 
   module.exports = {
@@ -16,7 +18,10 @@
           doc.type = req.body.type;
           doc.save(function(err) {
             if (err)
-              return res.status(500).send(err.errmessage || err);
+              return res.status(409).send({
+                'error': err.errmessage || err,
+                'message': 'This Type already exists'
+              });
             return res.status(200).json({
               'message': 'Type created'
             });
@@ -48,14 +53,23 @@
     },
     // Function to allow authenticated Users the respective rights.
     session: function(req, res, next) {
-      if (req.session.user) {
-        next();
-      } else {
-        return res.status(401).json({
-          error: 'You are not logged in'
+      var token = req.headers['x-access-token'];
+      if(token) {
+        jwt.verify(token, secretKey, function(err, decoded) {
+          if (!err) {
+            req.decoded = decoded;
+            next();
+          } else {
+            return res.status(401).send({
+              message: 'Failed to Authenticate'
+            });
+          }
         });
+      } else {
+        return res.status(401).send({message: 'You are not authenticated'});
       }
     },
+
     update: function(req, res) {
       Roles.findById(req.session.user.roleId, function(err, role) {
         if (err)
@@ -64,7 +78,7 @@
         if (roles === 'Admin') {
           DocType.findById(req.params.doc_id, function(err, doc) {
             if (err) {
-              return res.status(500).sned(err.errmessage || err);
+              return res.status(500).send(err.errmessage || err);
             } else {
               if (req.body.type) {
                 doc.type = req.body.type;
@@ -74,7 +88,8 @@
                   return res.status(500).send(err.errmessage || err);
                 } else {
                   return res.status(200).json({
-                    'message': 'Role successfully updated'
+                    'message': 'Role successfully updated',
+                    'type': doc
                   });
                 }
               });

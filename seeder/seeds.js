@@ -45,7 +45,7 @@
     async.waterfall([
       function(callback) {
         server
-          .post('/users')
+          .post('/api/users')
           .send({
             username: 'Sheshe',
             firstname: 'Gertrude',
@@ -62,7 +62,7 @@
       },
       function(one, callback) {
         server
-          .post('/users')
+          .post('/api/users')
           .send({
             username: 'Kachuna',
             firstname: 'Anita',
@@ -79,7 +79,7 @@
       },
       function(one, two, callback) {
         server
-          .post('/users')
+          .post('/api/users')
           .send({
             username: 'Kidoti',
             firstname: 'Cynthia',
@@ -121,7 +121,7 @@
       accessType: 'Private',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated:  date.setDate(3),
+      dateCreated: date.setDate(3),
       accessId: role[0]._id
     }, {
       title: 'Three',
@@ -130,7 +130,7 @@
       accessType: 'None',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated:  date.setDate(4),
+      dateCreated: date.setDate(4),
       accessId: role[1]._id
     }, {
       title: 'Four',
@@ -139,8 +139,8 @@
       accessType: 'None',
       typeId: type[0]._id,
       lastModified: Date.now(),
-      dateCreated:  date.setDate(5),
-      accessId: role[1]._id
+      dateCreated: date.setDate(5),
+      accessId: role[0]._id
     }, {
       title: 'Five',
       content: 'Christian Bale',
@@ -148,7 +148,7 @@
       accessType: 'Private',
       typeId: type[1]._id,
       lastModified: Date.now(),
-      dateCreated:  date.setDate(6),
+      dateCreated: date.setDate(6),
       accessId: role[1]._id
     }, {
       title: 'Six',
@@ -157,7 +157,7 @@
       accessType: 'None',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated:  date.setDate(7),
+      dateCreated: date.setDate(7),
       accessId: role[2]._id
     }, {
       title: 'Seven',
@@ -166,7 +166,7 @@
       accessType: 'Private',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated:  date.setDate(8),
+      dateCreated: date.setDate(8),
       accessId: role[2]._id
     }, {
       title: 'Eight',
@@ -175,7 +175,7 @@
       accessType: 'None',
       typeId: type[2]._id,
       lastModified: Date.now(),
-      dateCreated:  date.setDate(9),
+      dateCreated: date.setDate(9),
       accessId: role[2]._id
     }, {
       title: 'Nine',
@@ -184,11 +184,19 @@
       accessType: 'None',
       typeId: type[3]._id,
       lastModified: Date.now(),
-      dateCreated:  date.setDate(10),
+      dateCreated: date.setDate(10),
       accessId: role[0]._id
     }];
 
     Documents.create(documents, function(err, docs) {
+      if (err) {
+        console.log('Error Inserting New Data');
+        if (err.name == 'ValidationError') {
+          for (field in err.errors) {
+            console.log(err.errors[field].message);
+          }
+        }
+      }
       next(err, docs);
     });
   }

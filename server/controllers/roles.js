@@ -1,6 +1,8 @@
 (function() {
   'use strict';
   var Roles = require('../models/role');
+  var jwt = require('jsonwebtoken');
+  var secretKey = require('../../config/config').secret;
   var roles, role1;
   module.exports = {
     create: function(req, res) {
@@ -14,7 +16,10 @@
           role1.title = req.body.title;
           role1.save(function(err) {
             if (err)
-              return res.status(500).send(err.errmessage || err);
+              return res.status(409).send({
+                'error': err.errmessage || err,
+                'message': 'You cannot create duplicate roles'
+              });
             return res.status(200).json({
               'message': 'Role created'
             });
@@ -27,28 +32,21 @@
       });
     },
 
-    createOne: function(req, res) {
-      var role = new Roles();
-      role.title = req.body.title;
-      role.save(function(err) {
-        if (err) {
-          return res.status(500).send(err.errmessage || err);
-        } else {
-          return res.status(200).json({
-            'message': 'Role created'
-          });
-        }
-      });
-    },
-
     session: function(req, res, next) {
-      // Check if there is a user in session
-      if (req.session.user) {
-        next();
-      } else {
-        return res.status(401).json({
-          error: 'You are not logged in'
+      var token = req.headers['x-access-token'];
+      if(token) {
+        jwt.verify(token, secretKey, function(err, decoded) {
+          if (!err) {
+            req.decoded = decoded;
+            next();
+          } else {
+            return res.status(401).send({
+              message: 'Failed to Authenticate'
+            });
+          }
         });
+      } else {
+        return res.status(401).send({message: 'You are not authenticated'});
       }
     },
 
@@ -90,27 +88,6 @@
       });
     },
 
-    findByTitle: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, role) {
-        if (err)
-          return res.status(500).send(err.errmessage || err);
-        roles = role.title;
-        if (roles === 'Admin') {
-          Roles.find({
-            _id: req.params.title_id
-          }).exec(function(err, role) {
-            if (err)
-              return res.status(500).send(err.errmesage || err);
-            return res.status(200).json(role.title);
-          });
-        } else {
-          return res.status(403).json({
-            'message': 'You must be an Admin to perform this function'
-          });
-        }
-      });
-    },
-
     update: function(req, res) {
       Roles.findById(req.session.user.roleId, function(err, role) {
         if (err)
@@ -124,12 +101,13 @@
               if (req.body.title) {
                 role.title = req.body.title;
               }
-              role.save(function(err) {
+              role.save(function(err, role) {
                 if (err) {
                   return res.status(500).send(err.errmessage || err);
                 } else {
                   return res.status(200).json({
-                    'message': 'Role successfully updated'
+                    'message': 'Role successfully updated',
+                    'role': role
                   });
                 }
               });

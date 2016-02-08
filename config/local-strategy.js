@@ -1,11 +1,12 @@
 var passport = require('passport'),
   User = require('../server/models/user'),
   bcrypt = require('bcrypt-nodejs'),
+  // jwt = require('jsonwebtoken'),
   Users = require('../server/controllers/users'),
   Roles = require('../server/models/role'),
   LocalStrategy = require('passport-local').Strategy;
 
-module.exports = function(passport) {
+module.exports = function(app, passport) {
   passport.serializeUser(function(user, done) {
     done(null, user);
   });
@@ -41,28 +42,29 @@ module.exports = function(passport) {
           newUser.name.last = req.body.lastname;
           newUser.username = req.body.username;
           newUser.email = req.body.email;
+          newUser.loggedIn = false;
           newUser.password = newUser.generateHash(req.body.password);
-            Roles.find({
-              title: req.body.role || 'Viewer'
-            }).exec(function(err, role) {
-              if (err)
-                console.log(err);
-              newUser.roleId = role[0]._id;
-              // Save the user
-              newUser.save(function(err, user) {
-                        if (err) {
-                    console.log('Error Inserting New Data');
-                    if (err.name == 'ValidationError') {
-                        for (field in err.errors) {
-                            console.log(err.errors[field].message);
-                        }
-                    }
+          Roles.find({
+            title: req.body.role || 'Viewer'
+          }).exec(function(err, role) {
+            if (err)
+              console.log(err);
+            newUser.roleId = role[0]._id;
+            // Save the user
+            newUser.save(function(err, user) {
+              if (err) {
+                console.log('Error Inserting New Data');
+                if (err.name == 'ValidationError') {
+                  for (field in err.errors) {
+                    console.log(err.errors[field].message);
+                  }
                 }
-                user.password = null;
-                //console.log('CREATED',user);
-                return done(null, newUser);
-              });
+              }
+              user.password = null;
+              //console.log('CREATED',user);
+              return done(null, newUser);
             });
+          });
         }
       });
     });
@@ -85,12 +87,25 @@ module.exports = function(passport) {
       }
       // If user exists but wrong password
       if (!validPassword(user, password)) {
-        console.log('Invalid Password');
         return done(null, false);
       }
       // Success
-      user.password = null;
-      return done(null, user);
+      User.findOneAndUpdate({
+        username: user.username
+      }, {
+        $set: {
+          loggedIn: true
+        }
+      }, {
+        new: true
+      }, function(err, result) {
+        if (err) {
+          return res.status(500).send(err.errmessage || err);
+        } else {
+          result.password = null;
+          return done(null, result);
+        }
+      });
     });
   }));
 

@@ -20,6 +20,7 @@
     app = express();
 
   // Environment
+  app.set('superSecret', config.secret);
   app.use(bodyParser.urlencoded({
     extended: true
   }));
@@ -35,7 +36,7 @@
   app.use(passport.session());
 
   // Routes
-  Strategy(passport);
+  Strategy(app, passport);
   users(app, passport);
   types(app);
   roles(app);
