@@ -1,11 +1,10 @@
 (function() {
+  'use strict';
   var supertest = require('supertest');
-  var app = require('../app.js');
   var expect = require('chai').expect;
   var should = require('should');
   var assert = require('assert');
-  jwt = require('jsonwebtoken');
-  server = supertest.agent('http://127.0.0.1:4040');
+  var server = supertest.agent('http://127.0.0.1:4040');
   var helper = require('../seeder/seeds');
 
   describe('Document tests', function() {
@@ -190,7 +189,7 @@
               });
           });
       });
-      it ('User can find his/her document', function(done) {
+      it('User can find his/her document', function(done) {
         server
           .get('/api/documents/' + documents1[0]._id)
           .set('x-access-token', token)

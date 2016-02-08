@@ -1,15 +1,12 @@
 (function() {
+  'use strict';
   var supertest = require('supertest');
-  var app = require('../app.js');
   var expect = require('chai').expect;
-  var should = require('should');
   var assert = require('assert');
-  jwt = require('jsonwebtoken');
-  server = supertest.agent('http://127.0.0.1:4040');
-  var helper = require('../seeder/seeds');
+  var server = supertest.agent('http://127.0.0.1:4040');
 
   describe('User tests', function() {
-    var user, user2, documents, token, token1;
+    var user, admin, token, token1;
     describe('User', function() {
       it('A new user can be created', function(done) {
         server
@@ -42,8 +39,8 @@
             password: 'gertrudenyenyeshi'
           })
           .end(function(err, res) {
-            expect(res.status).to.equal(449);
-            assert.strictEqual(res.status, 449);
+            expect(res.status).to.equal(409);
+            assert.strictEqual(res.status, 409);
             assert.strictEqual(res.body.error, 'Sign up failed. This Email or Username is already in use');
             expect(res.body.error).to.have.string('Sign up failed. This Email or Username is already in use');
             done();
@@ -145,6 +142,7 @@
           .get('/api/users/logout')
           .set('x-access-token', token)
           .end(function(err, res) {
+            assert.strictEqual(res.status, 200);
             assert.deepEqual(res.body.message, 'You have logged out successfully');
             server
               .get('/api/users')

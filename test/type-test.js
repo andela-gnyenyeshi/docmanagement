@@ -1,15 +1,12 @@
 (function() {
+  'use strict';
   var supertest = require('supertest');
-  var app = require('../app.js');
   var expect = require('chai').expect;
-  var should = require('should');
   var assert = require('assert');
-  jwt = require('jsonwebtoken');
-  server = supertest.agent('http://127.0.0.1:4040');
-  var helper = require('../seeder/seeds');
+  var server = supertest.agent('http://127.0.0.1:4040');
 
   describe('Role tests', function() {
-    var user, token, user2, token2, roles;
+    var token, roles, token1;
     describe('Role', function() {
       it('Role cannot be added by non-admin role', function(done) {
         server
@@ -67,7 +64,7 @@
               });
           });
       });
-      it('Types title is unique', function(done){
+      it('Types title is unique', function(done) {
         server
           .post('/api/types')
           .set('x-access-token', token)
@@ -97,7 +94,7 @@
             done();
           });
       });
-      it('Admin can update types', function(done){
+      it('Admin can update types', function(done) {
         server
           .put('/api/types/' + roles[4]._id)
           .set('x-access-token', token1)

@@ -1,15 +1,12 @@
 (function() {
+  'use strict';
   var supertest = require('supertest');
-  var app = require('../app.js');
   var expect = require('chai').expect;
-  var should = require('should');
   var assert = require('assert');
-  jwt = require('jsonwebtoken');
-  server = supertest.agent('http://127.0.0.1:4040');
-  var helper = require('../seeder/seeds');
+  var server = supertest.agent('http://127.0.0.1:4040');
 
   describe('Role tests', function() {
-    var user, token, user2, token2, roles;
+    var token, token1, roles;
     describe('Role', function() {
       it('Role cannot be added by non-admin role', function(done) {
         server
