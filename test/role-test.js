@@ -64,17 +64,28 @@
               });
           });
       });
-      it('Roles title is unique', function(done){
+      it('Role should be unique', function(done) {
         server
-          .post('/api/roles/')
-          .set('x-access-token', token)
+          .post('/api/users/login')
           .send({
-            title: 'Owner'
+            username: 'Sheshe',
+            password: 'gertrudenyenyeshi'
           })
           .end(function(err, res) {
-            assert.strictEqual(res.status, 409);
-            expect(res.body.error.errmsg).to.have.a.string('E11000 duplicate key error index');
-            done();
+            token1 = res.body.token;
+            assert.strictEqual(res.status, 200);
+            server
+              .post('/api/roles')
+              .set('x-access-token', token1)
+              .send({
+                title: 'Owner'
+              })
+              .end(function(err, res) {
+                assert.strictEqual(res.status, 409);
+                expect(res.body.error.errmsg).to.have.a.string('E11000 duplicate key error index');
+                assert.strictEqual(res.body.message, 'You cannot create duplicate roles');
+                done();
+              });
           });
       });
       it('Admin can see list of roles', function(done) {

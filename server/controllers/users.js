@@ -68,7 +68,6 @@
           var token = jwt.sign(user, req.app.get('superSecret'), {
             expireIn: '24h'
           });
-          req.session.user = user;
           return res.status(200).json({
             user: user,
             token: token
@@ -90,7 +89,6 @@
         if (err) {
           return res.status(500).send(err.errmessage || err);
         } else {
-          delete req.session.user;
           return res.status(200).json({
             'message': 'You have logged out successfully'
           });
@@ -110,7 +108,7 @@
 
     getDocs: function(req, res) {
       // Get all the documents that belong to the user
-      if (req.params.user_id === req.session.user._id) {
+      if (req.params.user_id === req.decoded._doc._id) {
         Documents.find({
           ownerId: req.params.user_id
         }).sort({
@@ -130,7 +128,7 @@
         Documents.find({
           ownerId: req.params.user_id,
           accessType: 'None',
-          accessId: req.session.user.roleId
+          accessId: req.decoded._doc.roleId
         }).sort({
           dateCreated: -1
         }).exec(function(err, document) {
@@ -155,7 +153,7 @@
 
     update: function(req, res) {
       User.findById(req.params.user_id, function(err, user) {
-        if (req.session.user._id === req.params.user_id) {
+        if (req.decoded._doc._id === req.params.user_id) {
           if (err) {
             return res.status(500).send(err.errmessage || err);
           } else {
@@ -191,7 +189,7 @@
     },
 
     delete: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, role) {
+      Roles.findById(req.decoded._doc.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;

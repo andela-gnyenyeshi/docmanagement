@@ -6,8 +6,8 @@
   var roles, role1;
   module.exports = {
     create: function(req, res) {
-      // Check the role of user in session.
-      Roles.findById(req.session.user.roleId, function(err, role) {
+      // Check the role of user in token Object.
+      Roles.findById(req.decoded._doc.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
@@ -51,7 +51,7 @@
     },
 
     find: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, role) {
+      Roles.findById(req.decoded._doc.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
@@ -70,7 +70,7 @@
     },
 
     findOne: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, role) {
+      Roles.findById(req.decoded._doc.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
@@ -89,7 +89,7 @@
     },
 
     update: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, role) {
+      Roles.findById(req.decoded._doc.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
@@ -122,7 +122,7 @@
     },
 
     delete: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, roles) {
+      Roles.findById(req.decoded._doc.roleId, function(err, roles) {
         if (err) {
           return res.status(500).send(err.errmessage || err);
         } else {

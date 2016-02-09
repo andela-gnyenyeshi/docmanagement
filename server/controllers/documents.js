@@ -10,7 +10,7 @@
   module.exports = {
     create: function(req, res) {
         var document = new Document();
-        document.ownerId = req.session.user._id;
+        document.ownerId = req.decoded._doc._id;
         document.title = req.body.title;
         document.content = req.body.content;
         document.dateCreated = Date.now();
@@ -69,7 +69,7 @@
       if (req.query.from) {
         Document.find({
           accessType: 'None',
-          accessId: req.session.user.roleId,
+          accessId: req.decoded._doc.roleId,
           dateCreated: {
             $gte: new Date(req.query.from),
             $lt: new Date(req.query.to)
@@ -88,7 +88,7 @@
       } else if (req.query.title) {
         Document.find({
           accessType: 'None',
-          accessId: req.session.user.roleId,
+          accessId: req.decoded._doc.roleId,
           title: req.query.title
         }, function(err, documents) {
           if (err) {
@@ -108,7 +108,7 @@
           if (err) {
             return res.status(500).send(err.errmessage || err);
           } else {
-            if (role[0]._id != req.session.user.roleId) {
+            if (role[0]._id != req.decoded._doc.roleId) {
               return res.status(401).json({
                 'message': 'Sorry, you are not allowed to view documents with this role'
               });
@@ -133,7 +133,7 @@
       } else {
         Document.find({
           accessType: 'None',
-          accessId: req.session.user.roleId
+          accessId: req.decoded._doc.roleId
         }).limit(req.query.limit).sort({
           dateCreated: -1
         }).exec(function(err, document) {
@@ -150,10 +150,10 @@
       Document.find({
         _id: req.params.document_id
       }).exec(function(err, documents) {
-        if (documents[0].id !== req.session.user._id) {
+        if (documents[0].id !== req.decoded._doc.roleId) {
           Document.find({
             _id : req.params.document_id,
-            accessId: req.session.user.roleId,
+            accessId: req.decoded._doc.roleId,
             accessType: 'None'
           }).exec(function(err, docs) {
             if (docs.length < 1) {
@@ -202,11 +202,11 @@
           return res.status(500).send(err.message || err);
         } else {
           // Documents can only be deleted by Admin or Owner
-          Role.findById(req.session.user.roleId, function(err, role) {
+          Role.findById(req.decoded._doc.roleId, function(err, role) {
             if (err)
               return res.status(500).send(err.errmessage || err);
             roles = role.title;
-            if (roles === 'Admin' || doc.ownerId === req.session.user._id) {
+            if (roles === 'Admin' || doc.ownerId === req.decoded._doc._id) {
               Document.remove({
                 _id: req.params.document_id
               }, function(err) {
@@ -232,7 +232,7 @@
           return res.status(500).send(err.errmessage || err);
         } else {
           // Users can only edit documents available to their role or they are the owner
-          if (doc.accessId == req.session.user.roleId || doc.ownerId === req.session.user_id) {
+          if (doc.accessId == req.decoded._doc.roleId || doc.ownerId === req.decoded._doc._id) {
             if (req.body.title) {
               doc.title = req.body.title;
             }

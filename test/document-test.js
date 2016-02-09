@@ -189,25 +189,25 @@
               });
           });
       });
-      it('User can find his/her document', function(done) {
-        server
-          .get('/api/documents/' + documents1[0]._id)
-          .set('x-access-token', token)
-          .end(function(err, res) {
-            assert.strictEqual(res.status, 200);
-            assert.strictEqual(documents1[0]._id, res.body[0]._id);
-            done();
-          });
-      });
       it('User cannot find a document he/she is not allowed to view', function(done) {
         server
           .get('/api/documents/' + documents[0]._id)
-          .set('x-access-token', token)
+          .set('x-access-token', token1)
           .end(function(err, res) {
             assert.strictEqual(res.status, 200);
             assert.strictEqual(res.body.message, 'This document does not exist or you are  not allowed to view it');
             done();
           });
+      });
+      it('User can find his/her document', function(done) {
+            server
+              .get('/api/documents/' + documents1[0]._id)
+              .set('x-access-token', token1)
+              .end(function(err, res) {
+                assert.strictEqual(res.status, 200);
+                assert.strictEqual(documents1[0]._id, res.body[0]._id);
+                done();
+              });
       });
     });
   });

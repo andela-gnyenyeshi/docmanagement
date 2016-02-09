@@ -9,7 +9,7 @@
   module.exports = {
     create: function(req, res) {
       // Check User role to see if it is Admin
-      Roles.findById(req.session.user.roleId, function(err, role) {
+      Roles.findById(req.decoded._doc.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
@@ -34,7 +34,7 @@
       });
     },
     find: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, role) {
+      Roles.findById(req.decoded._doc.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
@@ -71,7 +71,7 @@
     },
 
     update: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, role) {
+      Roles.findById(req.decoded._doc.roleId, function(err, role) {
         if (err)
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
@@ -103,7 +103,7 @@
       });
     },
     delete: function(req, res) {
-      Roles.findById(req.session.user.roleId, function(err, roles) {
+      Roles.findById(req.decoded._doc.roleId, function(err, roles) {
         if (err) {
           return res.status(500).send(err.errmessage || err);
         } else {

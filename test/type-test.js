@@ -64,18 +64,28 @@
               });
           });
       });
-      it('Types title is unique', function(done) {
+      it('Type title is unique', function(done) {
         server
-          .post('/api/types')
-          .set('x-access-token', token)
+          .post('/api/users/login')
           .send({
-            type: 'Scientific'
+            username: 'Sheshe',
+            password: 'gertrudenyenyeshi'
           })
           .end(function(err, res) {
-            assert.strictEqual(res.status, 409);
-            expect(res.body.error.errmsg).to.have.a.string('E11000 duplicate key error index');
-            expect(res.body.message).to.equal('This Type already exists');
-            done();
+            token1 = res.body.token;
+            assert.strictEqual(res.status, 200);
+            server
+              .post('/api/types')
+              .set('x-access-token', token1)
+              .send({
+                type: 'Scientific'
+              })
+              .end(function(err, res) {
+                assert.strictEqual(res.status, 409);
+                expect(res.body.error.errmsg).to.have.a.string('E11000 duplicate key error index');
+                assert.strictEqual(res.body.message, 'This Type already exists');
+                done();
+              });
           });
       });
       it('Admin can see list of Types', function(done) {
