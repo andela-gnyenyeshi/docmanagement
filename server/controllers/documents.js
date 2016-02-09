@@ -101,6 +101,35 @@
             res.status(200).json(documents);
           }
         });
+      } else if (req.query.role) {
+        Role.find({
+          title: req.query.role
+        }).exec(function(err, role) {
+          if (err) {
+            return res.status(500).send(err.errmessage || err);
+          } else {
+            if (role[0]._id != req.session.user.roleId) {
+              return res.status(401).json({
+                'message': 'Sorry, you are not allowed to view documents with this role'
+              });
+            } else {
+              Document.find({
+                accessType: 'None',
+                accessId: role[0]._id,
+              }, function(err, documents) {
+                if (err) {
+                  return res.status(500).send(err.errmessage || err);
+                } else if (documents.length < 1) {
+                  res.status(404).json({
+                    'message': 'No documents found'
+                  });
+                } else {
+                  res.status(200).json(documents);
+                }
+              });
+            }
+          }
+        });
       } else {
         Document.find({
           accessType: 'None',

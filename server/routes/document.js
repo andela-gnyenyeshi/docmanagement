@@ -7,9 +7,7 @@
     app.use(Documents.session);
     app.post('/api/documents', Documents.create);
     app.get('/api/documents', Documents.find);
-    //app.get('/api/documents', Documents.findByDate);
     app.get('/api/users/:user_id/documents', User.getDocs);
-    app.get('/api/:access_id/documents', Documents.findByRole);
     app.route('/api/documents/:document_id')
       .put(Documents.update)
       .get(Documents.findADoc)

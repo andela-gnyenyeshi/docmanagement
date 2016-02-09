@@ -76,7 +76,7 @@
           return res.status(500).send(err.errmessage || err);
         roles = role.title;
         if (roles === 'Admin') {
-          DocType.findById(req.params.doc_id, function(err, doc) {
+          DocType.findById(req.params.type_id, function(err, doc) {
             if (err) {
               return res.status(500).send(err.errmessage || err);
             } else {
@@ -88,7 +88,7 @@
                   return res.status(500).send(err.errmessage || err);
                 } else {
                   return res.status(200).json({
-                    'message': 'Role successfully updated',
+                    'message': 'Type successfully updated',
                     'type': doc
                   });
                 }
@@ -109,14 +109,14 @@
         } else {
           roles = roles.title;
           if (roles === 'Admin') {
-            if (req.params.doc_id) {
+            if (req.params.type_id) {
               Roles.remove({
-                _id: req.params.doc_id
+                _id: req.params.type_id
               }, function(err) {
                 if (err)
                   return res.status(500).send(err.errmessage || err);
                 return res.status(200).json({
-                  'message': 'Role deleted'
+                  'message': 'Type deleted'
                 });
               });
             }

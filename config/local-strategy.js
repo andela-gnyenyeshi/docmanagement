@@ -1,7 +1,6 @@
 var passport = require('passport'),
   User = require('../server/models/user'),
   bcrypt = require('bcrypt-nodejs'),
-  // jwt = require('jsonwebtoken'),
   Users = require('../server/controllers/users'),
   Roles = require('../server/models/role'),
   LocalStrategy = require('passport-local').Strategy;
@@ -33,7 +32,6 @@ module.exports = function(app, passport) {
           return done(err);
         }
         if (user) {
-          //console.log('Someone already has this Username or Email. Sorry -_-');
           return done(null, false);
         } else {
           //Create user if email is not in use
@@ -61,7 +59,6 @@ module.exports = function(app, passport) {
                 }
               }
               user.password = null;
-              //console.log('CREATED',user);
               return done(null, newUser);
             });
           });

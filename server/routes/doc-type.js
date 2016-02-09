@@ -7,7 +7,7 @@
     app.route('/api/types')
       .post(docTypes.create)
       .get(docTypes.find);
-    app.route('/api/types/:doc_id')
+    app.route('/api/types/:type_id')
       .put(docTypes.update)
       .delete(docTypes.delete);
   };

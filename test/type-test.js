@@ -6,7 +6,7 @@
   var server = supertest.agent('http://127.0.0.1:4040');
 
   describe('Role tests', function() {
-    var token, roles, token1;
+    var token, types, token1;
     describe('Role', function() {
       it('Role cannot be added by non-admin role', function(done) {
         server
@@ -83,7 +83,7 @@
           .get('/api/types')
           .set('x-access-token', token1)
           .end(function(err, res) {
-            roles = res.body;
+            types = res.body;
             assert.strictEqual(res.status, 200);
             assert.strictEqual(res.body.length, 5);
             assert.strictEqual(res.body[0].type, 'General');
@@ -96,25 +96,25 @@
       });
       it('Admin can update types', function(done) {
         server
-          .put('/api/types/' + roles[4]._id)
+          .put('/api/types/' + types[4]._id)
           .set('x-access-token', token1)
           .send({
             type: 'Historical'
           })
           .end(function(err, res) {
             assert.strictEqual(res.status, 200);
-            assert.strictEqual(res.body.message, 'Role successfully updated');
+            assert.strictEqual(res.body.message, 'Type successfully updated');
             assert.strictEqual(res.body.type.type, 'Historical');
             done();
           });
       });
       it('Admin can delete a type', function(done) {
         server
-          .delete('/api/types/' + roles[4]._id)
+          .delete('/api/types/' + types[4]._id)
           .set('x-access-token', token1)
           .end(function(err, res) {
             assert.strictEqual(res.status, 200);
-            assert.strictEqual(res.body.message, 'Role deleted');
+            assert.strictEqual(res.body.message, 'Type deleted');
             done();
           });
       });

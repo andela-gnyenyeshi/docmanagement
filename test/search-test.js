@@ -39,13 +39,43 @@
             done();
           });
       });
-      it('User can only search documents available to him/her', function(done) {
+      it('User can only search documents by title available to him/her', function(done) {
         server
           .get('/api/documents/?title=Two')
           .set('x-access-token', token)
           .end(function(err, res) {
             assert.strictEqual(res.status, 404);
             assert.strictEqual(res.body.message, 'No documents found');
+            done();
+          });
+      });
+      it('Documents can be searched by role. Only Roles available to them', function(done) {
+        server
+          .post('/api/users/login')
+          .send({
+            username: 'Sheshe',
+            password: 'gertrudenyenyeshi'
+          })
+          .end(function(err, res) {
+            user = res.body;
+            token = res.body.token;
+            server
+              .get('/api/documents/?role=Viewer')
+              .set('x-access-token', token)
+              .end(function(err, res) {
+                assert.strictEqual(res.status, 401);
+                assert.strictEqual(res.body.message, 'Sorry, you are not allowed to view documents with this role');
+                done();
+              });
+          });
+      });
+      it('User can only search documents by title available to him/her', function(done) {
+        server
+          .get('/api/documents/?role=Admin')
+          .set('x-access-token', token)
+          .end(function(err, res) {
+            assert.strictEqual(res.status, 200);
+            assert.strictEqual(res.body.accessId, user.roleId);
             done();
           });
       });

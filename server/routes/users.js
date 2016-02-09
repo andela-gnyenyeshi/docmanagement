@@ -5,7 +5,6 @@
   module.exports = function(app) {
     app.post('/api/users/login', Users.login);
     app.get('/api/users/logout', Users.session, Users.logout);
-    app.get('/api/logout', Users.loggedOut);
     app.route('/api/users')
       .post(Users.createUser)
       .get(Users.session, Users.find);
