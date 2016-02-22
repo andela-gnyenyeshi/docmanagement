@@ -150,7 +150,8 @@
       Document.find({
         _id: req.params.document_id
       }).exec(function(err, documents) {
-        if (documents[0].id !== req.decoded._doc.roleId) {
+        console.log('Ndio hiziz documants', documents);
+        if (documents[0]._id !== req.decoded._doc.roleId) {
           Document.find({
             _id : req.params.document_id,
             accessId: req.decoded._doc.roleId,
